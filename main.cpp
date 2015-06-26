@@ -36,6 +36,8 @@ int main( int argc, char* argv[] )
 				}
 				else
 				{
+					printf( "main.cpp: OpenGL version = %s\n", glGetString( GL_VERSION ) );
+
 					Vertex vertices[] =
 					{
 						{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
@@ -52,6 +54,19 @@ int main( int argc, char* argv[] )
 
 					Mesh mesh;
 					mesh.AddVertices( vertices, 4, indices, 6 );
+
+					const char* vsource = "#version 450\n"
+						"layout (location=0) in vec3 PositionIn;"
+						"void main() { gl_Position = vec4( PositionIn, 1.0 ); }";
+
+					const char* fsource = "#version 450\n"
+						"out vec4 FragColor;"
+						"void main() { FragColor = vec4( 0.0, 0.0, 1.0, 1.0 ); }";
+
+					Shader shader;
+					shader.Compile( vsource, GL_VERTEX_SHADER );
+					shader.Compile( fsource, GL_FRAGMENT_SHADER );
+					shader.Link();
 
 					bool running = true;
 					SDL_Event e;
@@ -70,6 +85,8 @@ int main( int argc, char* argv[] )
 						// Render
 						glClearColor( 1.0f, 0.0f, 0.0f, 0.0f );
 						glClear( GL_COLOR_BUFFER_BIT );
+
+						shader.Bind();
 
 						mesh.Render();
 

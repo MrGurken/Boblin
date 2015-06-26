@@ -2,6 +2,12 @@
 
 Shader::Shader()
 {
+	m_glProgram = glCreateProgram();
+}
+
+Shader::Shader( const Shader& ref )
+	: m_glProgram( ref.m_glProgram ), m_mapUniforms( ref.m_mapUniforms )
+{
 }
 
 Shader::~Shader()
@@ -22,9 +28,9 @@ bool Shader::Compile( const char* source, GLenum type )
 		glGetShaderiv( shader, GL_COMPILE_STATUS, &success );
 		if( success == GL_FALSE )
 		{
-			char buf[128] = {};
-			int len = 128;
-			glGetShaderInfoLog( shader, 128, &len, buf );
+			char buf[DEBUG_LOG_SIZE] = {};
+			int len = DEBUG_LOG_SIZE;
+			glGetShaderInfoLog( shader, DEBUG_LOG_SIZE, &len, buf );
 
 			printf( "Shader.cpp: %s\n", buf );
 		}
@@ -50,9 +56,9 @@ bool Shader::Link()
 	glGetProgramiv( m_glProgram, GL_LINK_STATUS, &success );
 	if( success == GL_FALSE )
 	{
-		char buf[128] = {};
-		int len = 128;
-		glGetProgramInfoLog( m_glProgram, 128, &len, buf );
+		char buf[DEBUG_LOG_SIZE] = {};
+		int len = DEBUG_LOG_SIZE;
+		glGetProgramInfoLog( m_glProgram, DEBUG_LOG_SIZE, &len, buf );
 
 		printf( "Shader.cpp: %s\n", buf );
 	}
@@ -65,6 +71,11 @@ bool Shader::Link()
 void Shader::Bind()
 {
 	glUseProgram( m_glProgram );
+}
+
+void Shader::Destroy()
+{
+	glDeleteProgram( m_glProgram );
 }
 
 bool Shader::AddUniform( const string& uniform )

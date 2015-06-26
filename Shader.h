@@ -10,15 +10,19 @@ using std::string;
 using std::map;
 using std::pair;
 
+#define DEBUG_LOG_SIZE 1024
+
 class Shader
 {
 public:
 	Shader();
+	Shader( const Shader& ref );
 	virtual ~Shader();
-
+	
 	bool	Compile( const char* source, GLenum type );
 	bool	Link();
 	void	Bind();
+	void	Destroy();
 
 	bool	AddUniform( const string& uniform );
 	void	SetUniformi( const string& uniform, int value );
