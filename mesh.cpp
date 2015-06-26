@@ -24,12 +24,12 @@ void Mesh::AddVertices( Vertex* vertices, int nv, GLuint* indices, int ni )
 	// generate a vertex buffer object and send vertex information to it
 	glGenBuffers( 1, &m_glVBO );
 	glBindBuffer( GL_ARRAY_BUFFER, m_glVBO );
-	glBufferData( GL_ARRAY_BUFFER, nv, vertices, GL_STATIC_DRAW );
+	glBufferData( GL_ARRAY_BUFFER, nv*sizeof(Vertex), vertices, GL_STATIC_DRAW );
 	
 	// generate a index buffer object and send index information to it
 	glGenBuffers( 1, &m_glIBO );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, m_glIBO );
-	glBufferData( GL_ELEMENT_ARRAY_BUFFER, ni, indices, GL_STATIC_DRAW );
+	glBufferData( GL_ELEMENT_ARRAY_BUFFER, ni*sizeof(GLuint), indices, GL_STATIC_DRAW );
 
 	glEnableVertexAttribArray( 0 ); // position
 	glEnableVertexAttribArray( 1 ); // texture coordinates
@@ -46,6 +46,8 @@ void Mesh::AddVertices( Vertex* vertices, int nv, GLuint* indices, int ni )
 	glBindBuffer( GL_ARRAY_BUFFER, 0 );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 	glBindVertexArray( 0 );
+
+	m_iSize = ni;
 }
 
 void Mesh::Render()

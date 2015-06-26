@@ -1,8 +1,12 @@
+#include "GL\glew.h"
 #include "SDL.h"
 #include "SDL_main.h"
 #include "SDL_opengl.h"
 #include "lua.hpp"
 #include <stdio.h>
+
+#include "mesh.h"
+#include "Shader.h"
 
 int main( int argc, char* argv[] )
 {
@@ -23,28 +27,57 @@ int main( int argc, char* argv[] )
 			SDL_GLContext glContext = SDL_GL_CreateContext(window);
 			if( glContext )
 			{
-				bool running = true;
-				SDL_Event e;
-				while( running )
+				glewExperimental = GL_TRUE;
+				GLenum status = glewInit();
+				if( status != GLEW_OK )
 				{
-					while( SDL_PollEvent( &e ) )
+					printf( "main.cpp: Failed to initialize GLEW.\n" );
+					result = -1;
+				}
+				else
+				{
+					Vertex vertices[] =
 					{
-						if( e.type == SDL_QUIT )
-							running = false;
-						else if( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE )
-							running = false;
+						{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+						{ 0.0f, 1.0f, 0.0f, 0.0f, 0.0f },
+						{ 1.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+						{ 1.0f, 1.0f, 0.0f, 0.0f, 0.0f }
+					};
+
+					GLuint indices[] =
+					{
+						0, 1, 2,
+						1, 3, 2
+					};
+
+					Mesh mesh;
+					mesh.AddVertices( vertices, 4, indices, 6 );
+
+					bool running = true;
+					SDL_Event e;
+					while( running )
+					{
+						while( SDL_PollEvent( &e ) )
+						{
+							if( e.type == SDL_QUIT )
+								running = false;
+							else if( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE )
+								running = false;
+						}
+
+						// Update
+
+						// Render
+						glClearColor( 1.0f, 0.0f, 0.0f, 0.0f );
+						glClear( GL_COLOR_BUFFER_BIT );
+
+						mesh.Render();
+
+						SDL_GL_SwapWindow( window );
+
+						// Adjust time
+						SDL_Delay( 100 );
 					}
-
-					// Update
-
-					// Render
-					glClearColor( 1.0f, 0.0f, 0.0f, 0.0f );
-					glClear( GL_COLOR_BUFFER_BIT );
-
-					SDL_GL_SwapWindow( window );
-
-					// Adjust time
-					SDL_Delay( 100 );
 				}
 
 				SDL_GL_DeleteContext( glContext );
