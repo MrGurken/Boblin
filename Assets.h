@@ -23,7 +23,7 @@ class Assets
 {
 public:
 	static Assets& Instance();
-	virtual ~Assets(){}
+	virtual ~Assets(){ SDL_DestroyMutex( m_sdlMutex ); }
 
 	template<typename T> T* Load( const string& filename )
 	{
@@ -32,7 +32,7 @@ public:
 		SDL_LockMutex( m_sdlMutex );
 		map<string,Asset*>::iterator it = m_mapAssets.find( filename );
 		if( it != m_mapAssets.end() )
-			result = it->second;
+			result = (T*)it->second;
 		SDL_UnlockMutex( m_sdlMutex );
 
 		if( result == nullptr )
@@ -57,7 +57,7 @@ public:
 	void Unload();
 
 private:
-	Assets(){}
+	Assets() { m_sdlMutex = SDL_CreateMutex(); }
 	Assets( const Assets& ){}
 
 	map<string,Asset*> m_mapAssets;

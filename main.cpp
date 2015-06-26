@@ -7,6 +7,7 @@
 
 #include "mesh.h"
 #include "Shader.h"
+#include "Texture.h"
 
 int main( int argc, char* argv[] )
 {
@@ -40,33 +41,41 @@ int main( int argc, char* argv[] )
 
 					Vertex vertices[] =
 					{
-						{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
-						{ 0.0f, 1.0f, 0.0f, 0.0f, 0.0f },
-						{ 1.0f, 0.0f, 0.0f, 0.0f, 0.0f },
-						{ 1.0f, 1.0f, 0.0f, 0.0f, 0.0f }
+						{ 0.0f, 0.0f, 0.0f, 0.5f, 0.5f },
+						{ 1.0f, -1.0f, 0.0f, 1.0f, 1.0f },
+						{ -1.0f, -1.0f, 0.0f, 0.0f, 1.0f }
 					};
 
 					GLuint indices[] =
 					{
 						0, 1, 2,
-						1, 3, 2
 					};
 
 					Mesh mesh;
-					mesh.AddVertices( vertices, 4, indices, 6 );
+					mesh.AddVertices( vertices, 3, indices, 3 );
 
 					const char* vsource = "#version 450\n"
 						"layout (location=0) in vec3 PositionIn;"
-						"void main() { gl_Position = vec4( PositionIn, 1.0 ); }";
+						"layout (location=1) in vec2 UVIn;"
+						"out vec2 UV0;"
+						"void main() { gl_Position = vec4( PositionIn, 1.0 ); UV0 = UVIn; }";
 
 					const char* fsource = "#version 450\n"
+						"in vec2 UV0;"
 						"out vec4 FragColor;"
-						"void main() { FragColor = vec4( 0.0, 0.0, 1.0, 1.0 ); }";
+						"uniform sampler2D diffuseMap;"
+						"void main() { FragColor = texture( diffuseMap, UV0 ); }";
 
 					Shader shader;
 					shader.Compile( vsource, GL_VERTEX_SHADER );
 					shader.Compile( fsource, GL_FRAGMENT_SHADER );
 					shader.Link();
+
+					Texture* texture = Assets::Instance().Load<Texture>( "./res/textures/Koala.jpg" );
+					if( texture == nullptr )
+					{
+						printf( "main.cpp: Failed to load texture.\n" );
+					}
 
 					bool running = true;
 					SDL_Event e;
@@ -87,6 +96,7 @@ int main( int argc, char* argv[] )
 						glClear( GL_COLOR_BUFFER_BIT );
 
 						shader.Bind();
+						texture->Bind();
 
 						mesh.Render();
 

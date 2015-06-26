@@ -1,5 +1,10 @@
 #include "Assets.h"
 
+Asset::Asset(){}
+Asset::~Asset(){}
+bool Asset::Load( const string& filename ) { return false; }
+void Asset::Unload() {}
+
 Assets& Assets::Instance()
 {
 	static Assets instance;
