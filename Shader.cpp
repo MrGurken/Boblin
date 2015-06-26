@@ -41,6 +41,8 @@ bool Shader::Compile( const char* source, GLenum type )
 
 			// TODO: Check if we can delete the shader after we have attached it to the program.
 			// If we don't delete the shader, we have a resource leak.
+			// NOTE: It seems to be working. But make sure.
+			glDeleteShader( shader );
 		}
 	}
 
