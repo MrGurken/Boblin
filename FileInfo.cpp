@@ -24,6 +24,7 @@ FileInfo& FileInfo::operator=( const FileInfo& ref )
 	m_creationTime = ref.m_creationTime;
 	m_modifiedTime = ref.m_modifiedTime;
 	m_accessTime = ref.m_accessTime;
+	return *this;
 }
 
 bool FileInfo::operator==( const FileInfo& ref )
@@ -55,6 +56,7 @@ void FileInfo::Get( const string& filename )
 		FindClose( file );
 	}
 #else
+	// TODO: Implement POSIX version
 #endif
 }
 
