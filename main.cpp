@@ -75,22 +75,6 @@ int main( int argc, char* argv[] )
 						printf( "main.cpp: Failed to load texture.\n" );
 					}
 
-					/*lua_State* lua = luaL_newstate();
-					luaL_openlibs( lua );
-					GameObject::lua_Register( lua );
-					
-					luaL_loadfile( lua, "./res/scripts/main.lua" );
-					int mainFunctionRef = -1;
-					if( lua_pcall( lua, 0, 0, 0 ) )
-					{
-						printf( "Lua error: %s\n", lua_tostring( lua, -1 ) );
-					}
-					else
-					{
-						lua_getglobal( lua, "main" );
-						mainFunctionRef = luaL_ref( lua, LUA_REGISTRYINDEX );
-					}*/
-
 					int mainFunctionRef = -1;
 					Script lua;
 					if( lua.Run( "./res/scripts/main.lua" ) )
@@ -142,7 +126,6 @@ int main( int argc, char* argv[] )
 					}
 
 					luaL_unref( lua, LUA_REGISTRYINDEX, mainFunctionRef );
-					lua_close( lua );
 				}
 
 				SDL_GL_DeleteContext( glContext );
