@@ -107,6 +107,9 @@ int main( int argc, char* argv[] )
 							}
 						}
 
+						if( lua.Hotload() )
+							validLua = true;
+
 						// Render
 						glClearColor( 1.0f, 0.0f, 0.0f, 0.0f );
 						glClear( GL_COLOR_BUFFER_BIT );

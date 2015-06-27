@@ -19,18 +19,25 @@ Script::operator lua_State*() const
 	return m_pLua;
 }
 
-void Script::Update()
+bool Script::Hotload()
 {
+	bool result = false;
+
 	FileInfo curInfo( m_strFilename );
 	if( curInfo != m_fileInfo )
 	{
 		if( curInfo != m_lastFileInfo )
 		{
+			printf( "Script.cpp: Hotloading.\n" );
 			Run( m_strFilename );
+
+			result = true;
 		}
 
 		m_lastFileInfo = curInfo;
 	}
+
+	return result;
 }
 
 bool Script::Run( const string& filename )

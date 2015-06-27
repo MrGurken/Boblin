@@ -15,7 +15,7 @@ public:
 
 	operator	lua_State*() const;
 
-	void		Update();
+	bool		Hotload();
 	bool		Run( const string& filename );
 
 	lua_State*	GetState() const;

@@ -1,7 +1,7 @@
 #include "FileInfo.h"
 
 FileInfo::FileInfo()
-	: m_creationTime( 0 ), m_modifiedTime( 0 ), m_accessTime( 0 )
+	: m_modifiedTime( 0 )
 {
 }
 
@@ -11,7 +11,7 @@ FileInfo::FileInfo( const string& filename )
 }
 
 FileInfo::FileInfo( const FileInfo& ref )
-	: m_creationTime( ref.m_creationTime ), m_modifiedTime( ref.m_modifiedTime ), m_accessTime( ref.m_accessTime )
+	: m_modifiedTime( ref.m_modifiedTime )
 {
 }
 
@@ -21,17 +21,13 @@ FileInfo::~FileInfo()
 
 FileInfo& FileInfo::operator=( const FileInfo& ref )
 {
-	m_creationTime = ref.m_creationTime;
 	m_modifiedTime = ref.m_modifiedTime;
-	m_accessTime = ref.m_accessTime;
 	return *this;
 }
 
 bool FileInfo::operator==( const FileInfo& ref )
 {
-	return ( m_creationTime == ref.m_creationTime &&
-			 m_modifiedTime == ref.m_modifiedTime &&
-			 m_accessTime == ref.m_accessTime );
+	return ( m_modifiedTime == ref.m_modifiedTime );
 }
 
 bool FileInfo::operator!=( const FileInfo& ref )
@@ -46,13 +42,7 @@ void FileInfo::Get( const string& filename )
 	HANDLE file = FindFirstFileA( filename.c_str(), &findData );
 	if( file )
 	{
-		FILETIME creation, modified, access;
-		if( GetFileTime( file, &creation, &access, &modified ) )
-		{
-			m_creationTime = FILETIME_TO_UINT64( creation );
-			m_modifiedTime = FILETIME_TO_UINT64( modified );
-			m_accessTime = FILETIME_TO_UINT64( access );
-		}
+		m_modifiedTime = FILETIME_TO_UINT64( findData.ftLastWriteTime );
 		FindClose( file );
 	}
 #else
@@ -60,6 +50,4 @@ void FileInfo::Get( const string& filename )
 #endif
 }
 
-uint64_t FileInfo::GetCreationTime() const { return m_creationTime; }
 uint64_t FileInfo::GetModifiedTime() const { return m_modifiedTime; }
-uint64_t FileInfo::GetAccessTime() const { return m_accessTime; }
