@@ -9,6 +9,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "GameObject.h"
+#include "Camera.h"
 
 int main( int argc, char* argv[] )
 {
@@ -38,11 +39,17 @@ int main( int argc, char* argv[] )
 				}
 				else
 				{
+					// TODO: Remove this
+					glDisable( GL_CULL_FACE );
+
 					const char* vsource = "#version 450\n"
 						"layout (location=0) in vec3 PositionIn;"
 						"layout (location=1) in vec2 UVIn;"
 						"out vec2 UV0;"
-						"void main() { gl_Position = vec4( PositionIn, 1.0 ); UV0 = UVIn; }";
+						"uniform mat4 ModelMatrix;"
+						"uniform mat4 ViewMatrix;"
+						"uniform mat4 ProjectionMatrix;"
+						"void main() { gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4( PositionIn, 1.0 ); UV0 = UVIn; }";
 
 					const char* fsource = "#version 450\n"
 						"in vec2 UV0;"
@@ -55,6 +62,12 @@ int main( int argc, char* argv[] )
 					shader.Compile( fsource, GL_FRAGMENT_SHADER );
 					shader.Link();
 
+					shader.AddUniform( "ModelMatrix" );
+					shader.AddUniform( "ViewMatrix" );
+					shader.AddUniform( "ProjectionMatrix" );
+
+					Camera camera( 0.0f, 640.0f, 0.0f, 480.0f, -1.0f, 1.0f );
+
 					Texture* texture = Assets::Instance().Load<Texture>( "./res/textures/Koala.jpg" );
 					if( texture == nullptr )
 					{
@@ -66,11 +79,18 @@ int main( int argc, char* argv[] )
 					GameObject::lua_Register( lua );
 					
 					luaL_loadfile( lua, "./res/scripts/main.lua" );
+					int mainFunctionRef = -1;
 					if( lua_pcall( lua, 0, 0, 0 ) )
 					{
 						printf( "Lua error: %s\n", lua_tostring( lua, -1 ) );
 					}
+					else
+					{
+						lua_getglobal( lua, "main" );
+						mainFunctionRef = luaL_ref( lua, LUA_REGISTRYINDEX );
+					}
 
+					bool validLua = true;
 					bool running = true;
 					SDL_Event e;
 					while( running )
@@ -84,6 +104,15 @@ int main( int argc, char* argv[] )
 						}
 
 						// Update
+						if( validLua )
+						{
+							lua_rawgeti( lua, LUA_REGISTRYINDEX, mainFunctionRef );
+							if( lua_pcall( lua, 0, 0, 0 ) )
+							{
+								printf( "Lua error: %s\n", lua_tostring( lua, -1 ) );
+								validLua = false;
+							}
+						}
 
 						// Render
 						glClearColor( 1.0f, 0.0f, 0.0f, 0.0f );
@@ -91,6 +120,9 @@ int main( int argc, char* argv[] )
 
 						shader.Bind();
 						texture->Bind();
+
+						shader.SetUniform( "ViewMatrix", camera.GetView() );
+						shader.SetUniform( "ProjectionMatrix", camera.GetProjection() );
 
 						GameObject::RenderAll( &shader );
 
@@ -100,6 +132,7 @@ int main( int argc, char* argv[] )
 						SDL_Delay( 100 );
 					}
 
+					luaL_unref( lua, LUA_REGISTRYINDEX, mainFunctionRef );
 					lua_close( lua );
 				}
 

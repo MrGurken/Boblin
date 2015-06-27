@@ -11,13 +11,15 @@ class Camera
 {
 public:
 	Camera();
-	Camera( float aspectRatio, float fov, float near, float far );
+	Camera( float aspectRatio, float fov, float nearplane, float farplane );
+	Camera( float left, float right, float top, float bottom, float nearplane, float farplane );
 	Camera( const Camera& ref );
 	virtual ~Camera();
 
 	void	Update();
 
-	void	SetProjection( float aspectRatio, float fov, float near, float far );
+	void	SetProjection( float aspectRatio, float fov, float nearplane, float farplane );
+	void	SetProjection( float left, float right, float top, float bottom, float nearplane, float farplane );
 	void	SetPosition( vec3 position );
 	void	SetRotation( quat rotation );
 

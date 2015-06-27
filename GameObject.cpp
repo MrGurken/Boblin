@@ -39,8 +39,8 @@ void GameObject::Update()
 
 void GameObject::Render( Shader* shader )
 {
-	//mat4 world = translate( vec3( m_position.x, m_position.y, 0.0f ) );
-	//shader->SetUniform( "WorldMatrix", world );
+	mat4 world = translate( vec3( m_position.x, m_position.y, 0.0f ) ) * scale( vec3( m_renderBounds.w, m_renderBounds.h, 1.0f ) );
+	shader->SetUniform( "ModelMatrix", world );
 
 	// TODO: Figure out how to draw different kinds of meshes
 	quad->Render();

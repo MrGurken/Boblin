@@ -4,9 +4,14 @@ Camera::Camera()
 {
 }
 
-Camera::Camera( float aspectRatio, float fov, float near, float far )
+Camera::Camera( float aspectRatio, float fov, float nearplane, float farplane )
 {
-	SetProjection( aspectRatio, fov, near, far );
+	SetProjection( aspectRatio, fov, nearplane, farplane );
+}
+
+Camera::Camera( float left, float right, float top, float bottom, float nearplane, float farplane )
+{
+	SetProjection( left, right, top, bottom, nearplane, farplane );
 }
 
 Camera::Camera( const Camera& ref )
@@ -14,13 +19,22 @@ Camera::Camera( const Camera& ref )
 {
 }
 
+Camera::~Camera()
+{
+}
+
 void Camera::Update()
 {
 }
 
-void Camera::SetProjection( float aspectRatio, float fov, float near, float far )
+void Camera::SetProjection( float aspectRatio, float fov, float nearplane, float farplane )
 {
-	m_projection = glm::perspective( fov, aspectRatio, near, far );
+	m_projection = perspective( fov, aspectRatio, nearplane, farplane );
+}
+
+void Camera::SetProjection( float left, float right, float top, float bottom, float nearplane, float farplane )
+{
+	m_projection = ortho( left, right, bottom, top, nearplane, farplane );
 }
 
 void Camera::SetPosition( vec3 position )
@@ -35,7 +49,7 @@ void Camera::SetRotation( quat rotation )
 
 mat4 Camera::GetView() const
 {
-	mat4 result = mat4_cast( m_rotation ) * translate( -m_position );
+	mat4 result = /*mat4_cast( m_rotation ) **/ translate( -m_position );
 	return result;
 }
 
@@ -46,5 +60,5 @@ mat4 Camera::GetProjection() const
 
 mat4 Camera::GetViewProjection() const
 {
-	return ( GetView() * m_projection );
+	return ( m_projection * GetView() );
 }
