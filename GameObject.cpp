@@ -1,12 +1,61 @@
 #include "GameObject.h"
 
+vector<GameObject*> GameObject::s_vecObjects;
+Mesh* GameObject::quad = nullptr;
+
 GameObject::GameObject()
 	: m_bAlive( false )
 {
+	if( quad == nullptr )
+	{
+		Vertex vertices[] =
+		{
+			{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+			{ 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },
+			{ 1.0f, 0.0f, 0.0f, 1.0f, 0.0f },
+			{ 1.0f, 1.0f, 0.0f, 1.0f, 1.0f }
+		};
+
+		GLuint indices[] =
+		{
+			0, 1, 2,
+			1, 3, 2
+		};
+
+		quad = new Mesh();
+		quad->AddVertices( vertices, 4, indices, 6 );
+	}
 }
 
 GameObject::~GameObject()
 {
+}
+
+void GameObject::Update()
+{
+	m_position += m_velocity;
+	m_velocity += m_friction;
+}
+
+void GameObject::Render( Shader* shader )
+{
+	//mat4 world = translate( vec3( m_position.x, m_position.y, 0.0f ) );
+	//shader->SetUniform( "WorldMatrix", world );
+
+	// TODO: Figure out how to draw different kinds of meshes
+	quad->Render();
+}
+
+void GameObject::UpdateAll()
+{
+	for( vector<GameObject*>::iterator it = s_vecObjects.begin(); it != s_vecObjects.end(); it++ )
+		(*it)->Update();
+}
+
+void GameObject::RenderAll( Shader* shader )
+{
+	for( vector<GameObject*>::iterator it = s_vecObjects.begin(); it != s_vecObjects.end(); it++ )
+		(*it)->Render( shader );
 }
 
 void GameObject::SetCollisionBounds( rect bounds ) { m_collisionBounds = bounds; }
@@ -15,6 +64,7 @@ void GameObject::SetPosition( vec2 position ) { m_position = position; }
 void GameObject::SetVelocity( vec2 velocity ) { m_velocity = velocity; }
 void GameObject::SetFriction( vec2 friction ) { m_friction = friction; }
 void GameObject::SetColor( vec4 color ) { m_color = color; }
+void GameObject::SetTexture( Texture* texture ) { m_pTexture = texture; }
 void GameObject::SetAlive( bool alive ) { m_bAlive = alive; }
 
 rect GameObject::GetCollisionBounds() const { return m_collisionBounds; }
@@ -22,8 +72,9 @@ rect GameObject::GetRenderBounds() const { return m_renderBounds; }
 vec2 GameObject::GetPosition() const { return m_position; }
 vec2 GameObject::GetVelocity() const { return m_velocity; }
 vec2 GameObject::GetFriction() const { return m_friction; }
-bool GameObject::GetAlive() const { return m_bAlive; }
 vec4 GameObject::GetColor() const { return m_color; }
+Texture* GameObject::GetTexture() const { return m_pTexture; }
+bool GameObject::GetAlive() const { return m_bAlive; }
 
 void GameObject::lua_Register( lua_State* lua )
 {
@@ -54,7 +105,7 @@ GameObject* GameObject::lua_Read( lua_State* lua, int index )
 	if( lua_istable( lua, index ) )
 	{
 		lua_getfield( lua, index, "__self" );
-		result = (GameObject*)lua_touserdata( lua, -1 );
+		result = static_cast<GameObject*>( lua_touserdata( lua, -1 ) );
 		lua_pop( lua, 1 );
 	}
 
@@ -72,17 +123,26 @@ int GameObject::lua_Write( lua_State* lua, GameObject* object )
 
 LIMP( Create )
 {
-	// TODO: Add to global vector of objects
 	GameObject* ptr = new GameObject();
+	// TODO: Possibly add mutex here
+	s_vecObjects.push_back( ptr );
 	return lua_Write( lua, ptr );
 }
 
 LIMP( Destroy )
 {
-	// TODO: Remove from global vector of objects
 	GameObject* ptr = lua_Read( lua, 1 );
 	if( ptr )
+	{
+		// TODO: Possibly add mutex here
+		vector<GameObject*>::iterator it;
+		for( it = s_vecObjects.begin(); it != s_vecObjects.end(); it++ )
+			if( *it == ptr )
+				break;
+
+		s_vecObjects.erase( it );
 		delete ptr;
+	}
 	return 0;
 }
 
@@ -244,32 +304,6 @@ LIMP( Friction )
 	return result;
 }
 
-LIMP( Alive )
-{
-	int result = 0;
-
-	int nargs = lua_gettop( lua );
-	if( nargs >= 1 )
-	{
-		GameObject* ptr = lua_Read( lua, 1 );
-		if( ptr )
-		{
-			if( nargs >= 2 ) // setting
-			{
-				bool alive = lua_toboolean( lua, 2 );
-				ptr->SetAlive( alive );
-			}
-			else // getting
-			{
-				lua_pushboolean( lua, ptr->GetAlive() );
-				result = 1;
-			}
-		}
-	}
-
-	return result;
-}
-
 LIMP( Color )
 {
 	int result = 0;
@@ -297,6 +331,58 @@ LIMP( Color )
 				lua_pushnumber( lua, v.b );
 				lua_pushnumber( lua, v.a );
 				result = 4;
+			}
+		}
+	}
+
+	return result;
+}
+
+LIMP( Texture )
+{
+	int result = 0;
+
+	int nargs = lua_gettop( lua );
+	if( nargs >= 1 )
+	{
+		GameObject* ptr = lua_Read( lua, 1 );
+		if( ptr )
+		{
+			if( nargs >= 2 ) // setting
+			{
+				Texture* texture = Texture::lua_Read( lua, 2 );
+				ptr->SetTexture( texture );
+			}
+			else // getting
+			{
+				Texture* texture = ptr->GetTexture();
+				result = Texture::lua_Write( lua, texture );
+			}
+		}
+	}
+
+	return result;
+}
+
+LIMP( Alive )
+{
+	int result = 0;
+
+	int nargs = lua_gettop( lua );
+	if( nargs >= 1 )
+	{
+		GameObject* ptr = lua_Read( lua, 1 );
+		if( ptr )
+		{
+			if( nargs >= 2 ) // setting
+			{
+				bool alive = lua_toboolean( lua, 2 );
+				ptr->SetAlive( alive );
+			}
+			else // getting
+			{
+				lua_pushboolean( lua, ptr->GetAlive() );
+				result = 1;
 			}
 		}
 	}

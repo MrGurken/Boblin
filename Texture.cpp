@@ -58,3 +58,63 @@ void Texture::Bind( GLenum slot )
 	glEnable( GL_TEXTURE_2D );
 	glBindTexture( GL_TEXTURE_2D, m_glID );
 }
+
+int Texture::GetWidth() const { return m_iWidth; }
+int Texture::GetHeight() const { return m_iHeight; }
+
+void Texture::lua_Register( lua_State* lua )
+{
+	// TODO: Figure out if all this is really worth it for just one method
+	luaL_Reg funcs[] =
+	{
+		{ "Dimensions", lua_Dimensions },
+		{ NULL, NULL }
+	};
+
+	luaL_newmetatable( lua, "Texture" );
+	luaL_setfuncs( lua, funcs, 0 );
+	lua_pushvalue( lua, -1 );
+	lua_setfield( lua, -2, "__index" );
+	lua_setglobal( lua, "Texture" );
+}
+
+Texture* Texture::lua_Read( lua_State* lua, int index )
+{
+	Texture* result = nullptr;
+	if( lua_istable( lua, index ) )
+	{
+		lua_getfield( lua, index, "__self" );
+		result = static_cast<Texture*>( lua_touserdata( lua, -1 ) );
+		lua_pop( lua, 1 );
+	}
+
+	return result;
+}
+
+int Texture::lua_Write( lua_State* lua, Texture* texture )
+{
+	lua_newtable( lua );
+	lua_pushlightuserdata( lua, texture );
+	lua_setfield( lua, -2, "__self" );
+	luaL_getmetatable( lua, "Texture" );
+	lua_setmetatable( lua, -2 );
+	return 1;
+}
+
+int Texture::lua_Dimensions( lua_State* lua )
+{
+	int result = 0;
+
+	if( lua_gettop( lua ) >= 1 )
+	{
+		Texture* ptr = lua_Read( lua, 1 );
+		if( ptr )
+		{
+			lua_pushnumber( lua, ptr->GetWidth() );
+			lua_pushnumber( lua, ptr->GetHeight() );
+			result = 2;
+		}
+	}
+
+	return result;
+}

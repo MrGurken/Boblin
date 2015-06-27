@@ -8,6 +8,7 @@
 #include "mesh.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "GameObject.h"
 
 int main( int argc, char* argv[] )
 {
@@ -37,23 +38,6 @@ int main( int argc, char* argv[] )
 				}
 				else
 				{
-					printf( "main.cpp: OpenGL version = %s\n", glGetString( GL_VERSION ) );
-
-					Vertex vertices[] =
-					{
-						{ 0.0f, 0.0f, 0.0f, 0.5f, 0.5f },
-						{ 1.0f, -1.0f, 0.0f, 1.0f, 1.0f },
-						{ -1.0f, -1.0f, 0.0f, 0.0f, 1.0f }
-					};
-
-					GLuint indices[] =
-					{
-						0, 1, 2,
-					};
-
-					Mesh mesh;
-					mesh.AddVertices( vertices, 3, indices, 3 );
-
 					const char* vsource = "#version 450\n"
 						"layout (location=0) in vec3 PositionIn;"
 						"layout (location=1) in vec2 UVIn;"
@@ -77,6 +61,16 @@ int main( int argc, char* argv[] )
 						printf( "main.cpp: Failed to load texture.\n" );
 					}
 
+					lua_State* lua = luaL_newstate();
+					luaL_openlibs( lua );
+					GameObject::lua_Register( lua );
+					
+					luaL_loadfile( lua, "./res/scripts/main.lua" );
+					if( lua_pcall( lua, 0, 0, 0 ) )
+					{
+						printf( "Lua error: %s\n", lua_tostring( lua, -1 ) );
+					}
+
 					bool running = true;
 					SDL_Event e;
 					while( running )
@@ -98,13 +92,15 @@ int main( int argc, char* argv[] )
 						shader.Bind();
 						texture->Bind();
 
-						mesh.Render();
+						GameObject::RenderAll( &shader );
 
 						SDL_GL_SwapWindow( window );
 
 						// Adjust time
 						SDL_Delay( 100 );
 					}
+
+					lua_close( lua );
 				}
 
 				SDL_GL_DeleteContext( glContext );
