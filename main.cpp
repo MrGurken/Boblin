@@ -10,6 +10,7 @@
 #include "Texture.h"
 #include "GameObject.h"
 #include "Camera.h"
+#include "Script.h"
 
 int main( int argc, char* argv[] )
 {
@@ -74,7 +75,7 @@ int main( int argc, char* argv[] )
 						printf( "main.cpp: Failed to load texture.\n" );
 					}
 
-					lua_State* lua = luaL_newstate();
+					/*lua_State* lua = luaL_newstate();
 					luaL_openlibs( lua );
 					GameObject::lua_Register( lua );
 					
@@ -85,6 +86,14 @@ int main( int argc, char* argv[] )
 						printf( "Lua error: %s\n", lua_tostring( lua, -1 ) );
 					}
 					else
+					{
+						lua_getglobal( lua, "main" );
+						mainFunctionRef = luaL_ref( lua, LUA_REGISTRYINDEX );
+					}*/
+
+					int mainFunctionRef = -1;
+					Script lua;
+					if( lua.Run( "./res/scripts/main.lua" ) )
 					{
 						lua_getglobal( lua, "main" );
 						mainFunctionRef = luaL_ref( lua, LUA_REGISTRYINDEX );
