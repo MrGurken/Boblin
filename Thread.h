@@ -16,7 +16,6 @@ class Thread
 {
 public:
 	Thread();
-	//Thread( const string& script, const string& func, bool autoclean );
 	virtual ~Thread();
 
 	static void Alloc();
@@ -39,7 +38,6 @@ public:
 	static int	lua_Sleep( lua_State* lua );
 
 private:
-	//static vector<Thread*>::iterator FindThread( Thread* thread );
 	static int	DoWork( void* data );
 
 	Thread( const Thread& ref ){}
@@ -52,7 +50,6 @@ private:
 	bool		m_bAutoClean;
 	bool		m_bUsed;
 
-	//static vector<Thread*> s_vecThreads;
 	static SDL_mutex* s_sdlMutex;
 	static Thread s_threads[MAX_THREADS];
 };

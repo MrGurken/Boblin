@@ -68,7 +68,8 @@ int main( int argc, char* argv[] )
 					shader.AddUniform( "ViewMatrix" );
 					shader.AddUniform( "ProjectionMatrix" );
 
-					Camera camera( 0.0f, 640.0f, 0.0f, 480.0f, -1.0f, 1.0f );
+					//Camera camera( 0.0f, 640.0f, 0.0f, 480.0f, -1.0f, 1.0f );
+					//Camera::SetActive( &camera );
 
 					Texture* texture = Assets::Instance().Load<Texture>( "./res/textures/Koala.jpg" );
 					if( texture == nullptr )
@@ -81,6 +82,7 @@ int main( int argc, char* argv[] )
 					int mainFunctionRef = -1;
 					Script lua;
 					Thread::lua_Register( lua );
+					Camera::lua_Register( lua );
 					if( lua.Run( "./res/scripts/main.lua" ) )
 					{
 						lua_getglobal( lua, "main" );
@@ -123,8 +125,12 @@ int main( int argc, char* argv[] )
 						shader.Bind();
 						texture->Bind();
 
-						shader.SetUniform( "ViewMatrix", camera.GetView() );
-						shader.SetUniform( "ProjectionMatrix", camera.GetProjection() );
+						Camera* camera = Camera::GetActive();
+						if( camera )
+						{
+							shader.SetUniform( "ViewMatrix", camera->GetView() );
+							shader.SetUniform( "ProjectionMatrix", camera->GetProjection() );
+						}
 
 						GameObject::RenderAll( &shader );
 

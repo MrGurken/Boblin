@@ -1,13 +1,7 @@
 #include "Thread.h"
 
-//vector<Thread*> Thread::s_vecThreads;
 SDL_mutex* Thread::s_sdlMutex = NULL;
 Thread Thread::s_threads[MAX_THREADS];
-
-/*Thread::Thread( const string& script, const string& func, bool autoclean )
-	: m_strScript( script ), m_strFunc( func ), m_bAutoClean( autoclean ), m_bDone( false ), m_bUsed( false )
-{
-}*/
 
 Thread::Thread()
 	: m_bUsed( false )
@@ -30,19 +24,6 @@ void Thread::Dealloc()
 
 void Thread::Clean()
 {
-	/*SDL_LockMutex( s_sdlMutex );
-	for( vector<Thread*>::iterator it = s_vecThreads.begin(); it != s_vecThreads.end(); it++ )
-	{
-		if( (*it)->m_bAutoClean && (*it)->m_bDone )
-		{
-			(*it)->Wait();
-			delete (*it);
-			s_vecThreads.erase( it );
-			break;
-		}
-	}
-	SDL_UnlockMutex( s_sdlMutex );*/
-
 	for( int i=0; i<MAX_THREADS; i++ )
 	{
 		if( s_threads[i].m_bUsed && s_threads[i].m_bDone )
@@ -108,6 +89,7 @@ int Thread::lua_Create( lua_State* lua )
 		if( lua_gettop( lua ) >= 3 )
 			autoclean = lua_toboolean( lua, 3 );
 
+		// TODO: Figure out if we really need a mutex here
 		SDL_LockMutex( s_sdlMutex );
 		Thread* t = nullptr;
 		for( int i=0; i<MAX_THREADS && t == nullptr; i++ )
@@ -117,13 +99,6 @@ int Thread::lua_Create( lua_State* lua )
 		if( t != nullptr )
 			t->Create( lua_tostring( lua, 1 ), lua_tostring( lua, 2 ), autoclean );
 		SDL_UnlockMutex( s_sdlMutex );
-
-		/*Thread* t = new Thread( lua_tostring( lua, 1 ), lua_tostring( lua, 2 ), autoclean );
-
-		// Add thread to global vector of threads
-		SDL_LockMutex( s_sdlMutex );
-		s_vecThreads.push_back( t );
-		SDL_UnlockMutex( s_sdlMutex );*/
 
 		if( t != nullptr )
 		{
@@ -165,13 +140,7 @@ int Thread::lua_Wait( lua_State* lua )
 		lua_pushnumber( lua, t->Wait() );
 		result = 1;
 
-		// Remove thread from global vector of threads
-		/*SDL_LockMutex( s_sdlMutex );
-		vector<Thread*>::iterator it = FindThread( t );
-		if( it != s_vecThreads.end() )
-			s_vecThreads.erase( it );
-		SDL_UnlockMutex( s_sdlMutex );*/
-
+		// TODO: Is a mutex really required here?
 		SDL_LockMutex( s_sdlMutex );
 		t->m_bUsed = false;
 		SDL_UnlockMutex( s_sdlMutex );
@@ -208,14 +177,6 @@ int Thread::lua_Sleep( lua_State* lua )
 	}
 	return 0;
 }
-
-/*vector<Thread*>::iterator Thread::FindThread( Thread* thread )
-{
-	for( vector<Thread*>::iterator it = s_vecThreads.begin(); it != s_vecThreads.end(); it++ )
-		if( *it == thread )
-			return it;
-	return s_vecThreads.end();
-}*/
 
 int Thread::DoWork( void* data )
 {
