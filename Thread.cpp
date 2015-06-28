@@ -121,7 +121,6 @@ int Thread::lua_Start( lua_State* lua )
 	{
 		lua_getfield( lua, 1, "__self" );
 		Thread* t = reinterpret_cast<Thread*>( lua_touserdata( lua, -1 ) );
-		lua_pop( lua, 1 );
 		t->Start();
 	}
 
@@ -136,7 +135,6 @@ int Thread::lua_Wait( lua_State* lua )
 	{
 		lua_getfield( lua, 1, "__self" );
 		Thread* t = reinterpret_cast<Thread*>( lua_touserdata( lua, -1 ) );
-		lua_pop( lua, 1 );
 		lua_pushnumber( lua, t->Wait() );
 		result = 1;
 
@@ -144,8 +142,6 @@ int Thread::lua_Wait( lua_State* lua )
 		SDL_LockMutex( s_sdlMutex );
 		t->m_bUsed = false;
 		SDL_UnlockMutex( s_sdlMutex );
-
-		delete t;
 	}
 
 	return result;
@@ -159,8 +155,6 @@ int Thread::lua_Done( lua_State* lua )
 	{
 		lua_getfield( lua, 1, "__self" );
 		Thread* t = reinterpret_cast<Thread*>( lua_touserdata( lua, -1 ) );
-		lua_pop( lua, 1 );
-
 		lua_pushboolean( lua, t->Done() );
 		result = 1;
 	}

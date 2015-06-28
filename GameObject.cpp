@@ -4,7 +4,7 @@ vector<GameObject*> GameObject::s_vecObjects;
 Mesh* GameObject::quad = nullptr;
 
 GameObject::GameObject()
-	: m_bAlive( false )
+	: m_bAlive( false ), m_pTexture( nullptr )
 {
 	if( quad == nullptr )
 	{
@@ -39,6 +39,11 @@ void GameObject::Update()
 
 void GameObject::Render( Shader* shader )
 {
+	if( m_pTexture )
+		m_pTexture->Bind();
+	else
+		glBindTexture( GL_TEXTURE_2D, 0 );
+
 	mat4 world = translate( vec3( m_position.x, m_position.y, 0.0f ) ) * scale( vec3( m_renderBounds.w, m_renderBounds.h, 1.0f ) );
 	shader->SetUniform( "ModelMatrix", world );
 
@@ -88,6 +93,7 @@ void GameObject::lua_Register( lua_State* lua )
 		{ "Velocity", lua_Velocity },
 		{ "Friction", lua_Friction },
 		{ "Color", lua_Color },
+		{ "Texture", lua_Texture },
 		{ "Alive", lua_Alive },
 		{ NULL, NULL }
 	};

@@ -71,11 +71,11 @@ int main( int argc, char* argv[] )
 					//Camera camera( 0.0f, 640.0f, 0.0f, 480.0f, -1.0f, 1.0f );
 					//Camera::SetActive( &camera );
 
-					Texture* texture = Assets::Instance().Load<Texture>( "./res/textures/Koala.jpg" );
+					/*Texture* texture = Assets::Instance().Load<Texture>( "./res/textures/Koala.jpg" );
 					if( texture == nullptr )
 					{
 						printf( "main.cpp: Failed to load texture.\n" );
-					}
+					}*/
 
 					Thread::Alloc();
 
@@ -121,7 +121,7 @@ int main( int argc, char* argv[] )
 						glClear( GL_COLOR_BUFFER_BIT );
 
 						shader.Bind();
-						texture->Bind();
+						//texture->Bind();
 
 						Camera* camera = Camera::GetActive();
 						if( camera )

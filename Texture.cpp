@@ -85,7 +85,7 @@ Texture* Texture::lua_Read( lua_State* lua, int index )
 	if( lua_istable( lua, index ) )
 	{
 		lua_getfield( lua, index, "__self" );
-		result = static_cast<Texture*>( lua_touserdata( lua, -1 ) );
+		result = reinterpret_cast<Texture*>( lua_touserdata( lua, -1 ) );
 	}
 
 	return result;
