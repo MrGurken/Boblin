@@ -1,6 +1,7 @@
 #ifndef ASSETS_H
 #define ASSETS_H
 
+#include "FileInfo.h"
 #include "SDL.h"
 #include "SDL_mutex.h"
 #include <string>

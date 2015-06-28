@@ -106,7 +106,6 @@ GameObject* GameObject::lua_Read( lua_State* lua, int index )
 	{
 		lua_getfield( lua, index, "__self" );
 		result = static_cast<GameObject*>( lua_touserdata( lua, -1 ) );
-		lua_pop( lua, 1 );
 	}
 
 	return result;

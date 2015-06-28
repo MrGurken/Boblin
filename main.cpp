@@ -11,6 +11,7 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "Script.h"
+#include "Thread.h"
 
 int main( int argc, char* argv[] )
 {
@@ -75,8 +76,11 @@ int main( int argc, char* argv[] )
 						printf( "main.cpp: Failed to load texture.\n" );
 					}
 
+					Thread::Alloc();
+
 					int mainFunctionRef = -1;
 					Script lua;
+					Thread::lua_Register( lua );
 					if( lua.Run( "./res/scripts/main.lua" ) )
 					{
 						lua_getglobal( lua, "main" );
@@ -110,6 +114,8 @@ int main( int argc, char* argv[] )
 						if( lua.Hotload() )
 							validLua = true;
 
+						Thread::Clean();
+
 						// Render
 						glClearColor( 1.0f, 0.0f, 0.0f, 0.0f );
 						glClear( GL_COLOR_BUFFER_BIT );
@@ -127,6 +133,8 @@ int main( int argc, char* argv[] )
 						// Adjust time
 						SDL_Delay( 100 );
 					}
+
+					Thread::Dealloc();
 
 					luaL_unref( lua, LUA_REGISTRYINDEX, mainFunctionRef );
 				}
