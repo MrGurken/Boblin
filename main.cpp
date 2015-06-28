@@ -25,7 +25,7 @@ int main( int argc, char* argv[] )
 	else
 	{
 		// TODO: Enable config file for window size and title
-		SDL_Window* window = SDL_CreateWindow( "Boblin", 128, 128, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
+		SDL_Window* window = SDL_CreateWindow( "Boblin", 1080, 128, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
 
 		if( window )
 		{
@@ -81,8 +81,6 @@ int main( int argc, char* argv[] )
 
 					int mainFunctionRef = -1;
 					Script lua;
-					Thread::lua_Register( lua );
-					Camera::lua_Register( lua );
 					if( lua.Run( "./res/scripts/main.lua" ) )
 					{
 						lua_getglobal( lua, "main" );

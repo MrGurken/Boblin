@@ -1,11 +1,18 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
+#ifdef WIN32
+#include <Windows.h>
+#else
+#endif
+
 #include "lua.hpp"
 
 #include "GameObject.h"
 #include "Texture.h"
 #include "FileInfo.h"
+#include "Thread.h"
+#include "Camera.h"
 
 class Script
 {
@@ -19,6 +26,8 @@ public:
 	bool		Run( const string& filename );
 
 	lua_State*	GetState() const;
+
+	static int	lua_FilesInDirectory( lua_State* lua );
 
 private:
 	Script( const Script& ref ){}

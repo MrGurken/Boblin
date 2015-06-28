@@ -68,6 +68,7 @@ void Texture::lua_Register( lua_State* lua )
 	luaL_Reg funcs[] =
 	{
 		{ "Dimensions", lua_Dimensions },
+		{ "Load", lua_Load },
 		{ NULL, NULL }
 	};
 
@@ -85,7 +86,6 @@ Texture* Texture::lua_Read( lua_State* lua, int index )
 	{
 		lua_getfield( lua, index, "__self" );
 		result = static_cast<Texture*>( lua_touserdata( lua, -1 ) );
-		lua_pop( lua, 1 );
 	}
 
 	return result;
@@ -99,6 +99,24 @@ int Texture::lua_Write( lua_State* lua, Texture* texture )
 	luaL_getmetatable( lua, "Texture" );
 	lua_setmetatable( lua, -2 );
 	return 1;
+}
+
+int Texture::lua_Load( lua_State* lua )
+{
+	int result = 0;
+
+	if( lua_gettop( lua ) >= 1 )
+	{
+		const char* path = lua_tostring( lua, 1 );
+		Texture* t = Assets::Instance().Load<Texture>( path );
+
+		if( t )
+		{
+			result = lua_Write( lua, t );
+		}
+	}
+
+	return result;
 }
 
 int Texture::lua_Dimensions( lua_State* lua )

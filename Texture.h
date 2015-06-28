@@ -26,6 +26,7 @@ public:
 	static void lua_Register( lua_State* lua );
 	static Texture* lua_Read( lua_State* lua, int index );
 	static int lua_Write( lua_State* lua, Texture* texture );
+	static int lua_Load( lua_State* lua );
 	static int lua_Dimensions( lua_State* lua );
 
 private:

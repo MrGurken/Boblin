@@ -185,9 +185,10 @@ int Thread::DoWork( void* data )
 	Thread* t = reinterpret_cast<Thread*>( data );
 	t->m_bDone = false;
 
-	lua_State* lua = luaL_newstate();
+	/*lua_State* lua = luaL_newstate();
 	luaL_openlibs( lua );
 	lua_Register( lua );
+	Texture::lua_Register( lua );
 
 	luaL_loadfile( lua, t->m_strScript.c_str() );
 	if( lua_pcall( lua, 0, 0, 0 ) )
@@ -203,9 +204,21 @@ int Thread::DoWork( void* data )
 			printf( "Thread.cpp: Lua error: %s\n", lua_tostring( lua, -1 ) );
 			result = -1;
 		}
-	}
+	}*/
 
-	lua_close( lua );
+	Script lua;
+	if( lua.Run( t->m_strScript ) )
+	{
+		lua_getglobal( lua, t->m_strFunc.c_str() );
+		if( lua_pcall( lua, 0, 0, 0 ) )
+		{
+			printf( "Thread.cpp: Lua error: %s\n", lua_tostring( lua, -1 ) );
+			result = -1;
+		}
+	}
+	else
+		result = -1;
+
 	t->m_bDone = true;
 
 	return result;

@@ -5,6 +5,7 @@
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "SDL_mutex.h"
+#include "Script.h"
 #include <string>
 using std::string;
 #include <vector>
