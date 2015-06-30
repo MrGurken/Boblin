@@ -41,7 +41,7 @@ int main( int argc, char* argv[] )
 					// TODO: Remove this
 					glDisable( GL_CULL_FACE );
 
-					const char* vsource = "#version 450\n"
+					const char* vsource = "#version 330\n"
 						"layout (location=0) in vec3 PositionIn;"
 						"layout (location=1) in vec2 UVIn;"
 						"out vec2 UV0;"
@@ -50,7 +50,7 @@ int main( int argc, char* argv[] )
 						"uniform mat4 ProjectionMatrix;"
 						"void main() { gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4( PositionIn, 1.0 ); UV0 = UVIn; }";
 
-					const char* fsource = "#version 450\n"
+					const char* fsource = "#version 330\n"
 						"in vec2 UV0;"
 						"out vec4 FragColor;"
 						"uniform sampler2D diffuseMap;"
