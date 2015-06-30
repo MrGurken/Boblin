@@ -1,12 +1,7 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
 
-// TODO: Better inclusion
-#ifdef WIN32
-#include "GL\glew.h"
-#else
-#include <OpenGL/gl3.h>
-#endif
+#include "LibIncluder.h"
 
 #include "lua.hpp"
 #include "maths.h"

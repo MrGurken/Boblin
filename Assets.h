@@ -1,14 +1,6 @@
 #ifndef ASSETS_H
 #define ASSETS_H
 
-#ifdef WIN32
-#include "SDL.h"
-#include "SDL_mutex.h"
-#else
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mutex.h>
-#endif
-
 #include "FileInfo.h"
 #include <string>
 using std::string;
@@ -30,26 +22,22 @@ class Assets
 {
 public:
 	static Assets& Instance();
-	virtual ~Assets(){ SDL_DestroyMutex( m_sdlMutex ); }
+	virtual ~Assets(){}
 
 	template<typename T> T* Load( const string& filename )
 	{
 		T* result = nullptr;
 
-		SDL_LockMutex( m_sdlMutex );
 		map<string,Asset*>::iterator it = m_mapAssets.find( filename );
 		if( it != m_mapAssets.end() )
 			result = (T*)it->second;
-		SDL_UnlockMutex( m_sdlMutex );
 
 		if( result == nullptr )
 		{
 			result = new T();
 			if( result->Load( filename ) )
 			{
-				SDL_LockMutex( m_sdlMutex );
 				m_mapAssets.insert( pair<string,Asset*>( filename, result ) );
-				SDL_UnlockMutex( m_sdlMutex );
 			}
 			else
 			{
@@ -64,11 +52,10 @@ public:
 	void Unload();
 
 private:
-	Assets() { m_sdlMutex = SDL_CreateMutex(); }
+	Assets() {}
 	Assets( const Assets& ){}
 
 	map<string,Asset*> m_mapAssets;
-	SDL_mutex* m_sdlMutex;
 };
 
 #endif

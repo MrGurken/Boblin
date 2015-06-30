@@ -3,15 +3,9 @@
 
 #include "lua.hpp"
 #include "glm.hpp"
-#ifdef WIN32
-#include "gtc\matrix_transform.hpp"
-#include "gtc\quaternion.hpp"
-#include "gtx\transform.hpp"
-#else
 #include "matrix_transform.hpp"
 #include "quaternion.hpp"
 #include "transform.hpp"
-#endif
 using namespace glm;
 
 class Camera

@@ -1,11 +1,7 @@
 #ifndef MESH_H
 #define MESH_H
 
-#ifdef WIN32
-#include "GL\glew.h"
-#else
-#include <OpenGL/gl3.h>
-#endif
+#include "LibIncluder.h"
 
 struct Vertex
 {
