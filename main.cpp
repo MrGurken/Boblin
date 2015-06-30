@@ -1,7 +1,11 @@
+// TODO: Is this really required? All these libs are included in classes that are include later
+#ifdef WIN32
 #include "GL\glew.h"
 #include "SDL.h"
 #include "SDL_main.h"
 #include "SDL_opengl.h"
+#endif
+
 #include "lua.hpp"
 #include <stdio.h>
 
@@ -31,6 +35,7 @@ int main( int argc, char* argv[] )
 			SDL_GLContext glContext = SDL_GL_CreateContext(window);
 			if( glContext )
 			{
+#ifdef WIN32
 				glewExperimental = GL_TRUE;
 				GLenum status = glewInit();
 				if( status != GLEW_OK )
@@ -39,6 +44,7 @@ int main( int argc, char* argv[] )
 					result = -1;
 				}
 				else
+#endif
 				{
 					// TODO: Remove this
 					glDisable( GL_CULL_FACE );

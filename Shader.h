@@ -1,12 +1,21 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "Assets.h"
+// TODO: Better inclusion
+#ifdef WIN32
 #include "GL\glew.h"
 #include "glm.hpp"
 #include "gtc\matrix_transform.hpp"
 #include "gtx\transform.hpp"
+#else
+#include <OpenGL/gl3.h>
+#include "glm.hpp"
+#include "matrix_transform.hpp"
+#include "transform.hpp"
+#endif
+
 using namespace glm;
+#include "Assets.h"
 #include <string>
 using std::string;
 #include <map>

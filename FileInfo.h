@@ -6,7 +6,7 @@
 #define FILETIME_TO_UINT64( val ) ( ((uint64_t)val.dwHighDateTime << 32) | ((uint64_t)val.dwLowDateTime ) )
 #else
 #include <sys/stat.h>
-#include <sys/utime.h>
+#include <sys/time.h>
 #endif
 
 #include <stdint.h>

@@ -1,9 +1,15 @@
 #ifndef ASSETS_H
 #define ASSETS_H
 
-#include "FileInfo.h"
+#ifdef WIN32
 #include "SDL.h"
 #include "SDL_mutex.h"
+#else
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mutex.h>
+#endif
+
+#include "FileInfo.h"
 #include <string>
 using std::string;
 #include <map>
