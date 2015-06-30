@@ -143,14 +143,19 @@ int Camera::lua_Projection( lua_State* lua )
 		{
 			if( nargs >= 6 ) // orthographics
 			{
-				camera->SetProjection( lua_tonumber( lua, 2 ), lua_tonumber( lua, 3 ),
-									   lua_tonumber( lua, 4 ), lua_tonumber( lua, 5 ),
-									   lua_tonumber( lua, 6 ), lua_tonumber( lua, 7 ) );
+				camera->SetProjection( static_cast<float>( lua_tonumber( lua, 2 ) ),
+									   static_cast<float>( lua_tonumber( lua, 3 ) ),
+									   static_cast<float>( lua_tonumber( lua, 4 ) ),
+									   static_cast<float>( lua_tonumber( lua, 5 ) ),
+									   static_cast<float>( lua_tonumber( lua, 6 ) ),
+									   static_cast<float>( lua_tonumber( lua, 7 ) ) );
 			}
 			else if( nargs >= 4 ) // perspective
 			{
-				camera->SetProjection( lua_tonumber( lua, 2 ), lua_tonumber( lua, 3 ),
-									   lua_tonumber( lua, 4 ), lua_tonumber( lua, 5 ) );
+				camera->SetProjection( static_cast<float>( lua_tonumber( lua, 2 ) ),
+									   static_cast<float>( lua_tonumber( lua, 3 ) ),
+									   static_cast<float>( lua_tonumber( lua, 4 ) ),
+									   static_cast<float>( lua_tonumber( lua, 5 ) ) );
 			}
 		}
 	}
@@ -198,8 +203,10 @@ int Camera::lua_Rotation( lua_State* lua )
 		{
 			if( nargs >= 5 ) // setting
 			{
-				camera->SetRotation( quat( lua_tonumber( lua, 2 ), lua_tonumber( lua, 3 ),
-											lua_tonumber( lua, 4 ), lua_tonumber( lua, 5 ) ) );
+				camera->SetRotation( quat( static_cast<float>( lua_tonumber( lua, 2 ) ),
+											static_cast<float>( lua_tonumber( lua, 3 ) ),
+											static_cast<float>( lua_tonumber( lua, 4 ) ),
+											static_cast<float>( lua_tonumber( lua, 5 ) ) ) );
 			}
 			else // getting
 			{

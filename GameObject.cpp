@@ -163,10 +163,10 @@ LIMP( CollisionBounds )
 		{
 			if( nargs >= 5 ) // setting
 			{
-				float x = lua_tonumber( lua, 2 );
-				float y = lua_tonumber( lua, 3 );
-				float w = lua_tonumber( lua, 4 );
-				float h = lua_tonumber( lua, 5 );
+				float x = static_cast<float>( lua_tonumber( lua, 2 ) );
+				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
+				float w = static_cast<float>( lua_tonumber( lua, 4 ) );
+				float h = static_cast<float>( lua_tonumber( lua, 5 ) );
 
 				ptr->SetCollisionBounds( rect( x, y, w, h ) );
 			}
@@ -197,10 +197,10 @@ LIMP( RenderBounds )
 		{
 			if( nargs >= 5 ) // setting
 			{
-				float x = lua_tonumber( lua, 2 );
-				float y = lua_tonumber( lua, 3 );
-				float w = lua_tonumber( lua, 4 );
-				float h = lua_tonumber( lua, 5 );
+				float x = static_cast<float>( lua_tonumber( lua, 2 ) );
+				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
+				float w = static_cast<float>( lua_tonumber( lua, 4 ) );
+				float h = static_cast<float>( lua_tonumber( lua, 5 ) );
 
 				ptr->SetRenderBounds( rect( x, y, w, h ) );
 			}
@@ -231,8 +231,8 @@ LIMP( Position )
 		{
 			if( nargs >= 3 ) // setting
 			{
-				float x = lua_tonumber( lua, 2 );
-				float y = lua_tonumber( lua, 3 );
+				float x = static_cast<float>( lua_tonumber( lua, 2 ) );
+				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
 
 				ptr->SetPosition( vec2( x, y ) );
 			}
@@ -261,8 +261,8 @@ LIMP( Velocity )
 		{
 			if( nargs >= 3 ) // setting
 			{
-				float x = lua_tonumber( lua, 2 );
-				float y = lua_tonumber( lua, 3 );
+				float x = static_cast<float>( lua_tonumber( lua, 2 ) );
+				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
 
 				ptr->SetVelocity( vec2( x, y ) );
 			}
@@ -291,8 +291,8 @@ LIMP( Friction )
 		{
 			if( nargs >= 3 ) // setting
 			{
-				float x = lua_tonumber( lua, 2 );
-				float y = lua_tonumber( lua, 3 );
+				float x = static_cast<float>( lua_tonumber( lua, 2 ) );
+				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
 
 				ptr->SetFriction( vec2( x, y ) );
 			}
@@ -321,10 +321,10 @@ LIMP( Color )
 		{
 			if( nargs >= 5 ) // setting
 			{
-				float r = lua_tonumber( lua, 2 );
-				float g = lua_tonumber( lua, 3 );
-				float b = lua_tonumber( lua, 4 );
-				float a = lua_tonumber( lua, 5 );
+				float r = static_cast<float>( lua_tonumber( lua, 2 ) );
+				float g = static_cast<float>( lua_tonumber( lua, 3 ) );
+				float b = static_cast<float>( lua_tonumber( lua, 4 ) );
+				float a = static_cast<float>( lua_tonumber( lua, 5 ) );
 
 				ptr->SetColor( vec4( r, g, b, a ) );
 			}
@@ -381,7 +381,7 @@ LIMP( Alive )
 		{
 			if( nargs >= 2 ) // setting
 			{
-				bool alive = lua_toboolean( lua, 2 );
+				bool alive = ( lua_toboolean( lua, 2 ) != 0 );
 				ptr->SetAlive( alive );
 			}
 			else // getting

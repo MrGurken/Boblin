@@ -52,8 +52,7 @@ public:
 	void Unload();
 
 private:
-	Assets() {}
-	Assets( const Assets& ){}
+	Assets(){}
 
 	map<string,Asset*> m_mapAssets;
 };

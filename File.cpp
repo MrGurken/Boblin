@@ -51,7 +51,7 @@ int File::lua_Get( lua_State* lua, int mode )
 			do
 			{
 				const char* path = findData.cFileName;
-				bool directory = ( findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY );
+				bool directory = ( ( findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) != 0 );
 
 				if( directory )
 				{

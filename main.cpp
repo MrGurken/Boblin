@@ -1,11 +1,3 @@
-// TODO: Is this really required? All these libs are included in classes that are include later
-#ifdef WIN32
-#include "GL\glew.h"
-#include "SDL.h"
-#include "SDL_main.h"
-#include "SDL_opengl.h"
-#endif
-
 #include "lua.hpp"
 #include <stdio.h>
 
