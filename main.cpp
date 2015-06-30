@@ -19,6 +19,12 @@ int main( int argc, char* argv[] )
 	}
 	else
 	{
+        // TODO: Does this work on win32?
+#ifndef WIN32
+        SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
+        SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
+        SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+#endif
 		// TODO: Enable config file for window size and title
 		SDL_Window* window = SDL_CreateWindow( "Boblin", 1080, 128, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
 
