@@ -37,7 +37,7 @@ bool FileInfo::operator!=( const FileInfo& ref )
 
 void FileInfo::Get( const string& filename )
 {
-#if WIN32
+#ifdef WIN32
 	WIN32_FIND_DATA findData;
 	HANDLE file = FindFirstFileA( filename.c_str(), &findData );
 	if( file )
@@ -46,7 +46,11 @@ void FileInfo::Get( const string& filename )
 		FindClose( file );
 	}
 #else
-	// TODO: Implement POSIX version
+	struct stat data;
+	if( stat( filename.c_str(), &data ) >= 0 )
+	{
+		m_modifiedTime = data.st_mtime;
+	}
 #endif
 }
 
