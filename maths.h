@@ -1,8 +1,15 @@
 #ifndef MATHS_H
 #define MATHS_H
 
+#include "lua.hpp"
 #include "glm.hpp"
+#include "matrix_transform.hpp"
 using namespace glm;
+
+namespace Maths
+{
+    void lua_Register( lua_State* lua );
+}
 
 class rect
 {
@@ -40,8 +47,43 @@ public:
 
 	bool Intersect( const rect& ref ) const;
 	bool Contains( vec2 point ) const;
+    
+    static void lua_Register( lua_State* lua );
+    static rect lua_Read( lua_State* lua, int index );
+    static int lua_Write( lua_State* lua, rect value );
+    static int lua_Center( lua_State* lua );
+    static int lua_Intersect( lua_State* lua );
+    static int lua_Contains( lua_State* lua );
 
 	float x, y, w, h;
 };
+
+namespace Vec2
+{
+    void lua_Register( lua_State* lua );
+    vec2 lua_Read( lua_State* lua, int index );
+    int lua_Write( lua_State* lua, vec2 value );
+    int lua_Length( lua_State* lua );
+}
+
+namespace Vec3
+{
+    void lua_Register( lua_State* lua );
+    vec3 lua_Read( lua_State* lua, int index );
+    int lua_Write( lua_State* lua, vec3 value );
+    int lua_Length( lua_State* lua );
+}
+
+namespace Mat4
+{
+    void lua_Register( lua_State* lua );
+    mat4 lua_Read( lua_State* lua, int index );
+    int lua_Write( lua_State* lua, mat4 value );
+    int lua_Translation( lua_State* lua );
+    int lua_Scale( lua_State* lua );
+    int lua_Rotation( lua_State* lua );
+    int lua_Orthographic( lua_State* lua );
+    int lua_Perspective( lua_State* lua );
+}
 
 #endif
