@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "Script.h"
+#include "Input.h"
 
 int main( int argc, char* argv[] )
 {
@@ -71,6 +72,8 @@ int main( int argc, char* argv[] )
 					shader.AddUniform( "ViewMatrix" );
 					shader.AddUniform( "ProjectionMatrix" );
 
+					// TODO: Instead of assuming that the function we are looking for is
+					// called 'main', let Lua register it's main function with us.
 					int mainFunctionRef = -1;
 					Script lua;
 					if( lua.Run( "./res/scripts/main.lua" ) )
@@ -79,18 +82,15 @@ int main( int argc, char* argv[] )
 						mainFunctionRef = luaL_ref( lua, LUA_REGISTRYINDEX );
 					}
 
+					Input::Instance().SetWindow( window );
+
 					bool validLua = true;
 					bool running = true;
-					SDL_Event e;
 					while( running )
 					{
-						while( SDL_PollEvent( &e ) )
-						{
-							if( e.type == SDL_QUIT )
-								running = false;
-							else if( e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE )
-								running = false;
-						}
+						running = Input::Instance().Update();
+						if( Input::Instance().KeyDown( SDLK_ESCAPE ) )
+							running = false;
 
 						// Update
 						if( validLua )

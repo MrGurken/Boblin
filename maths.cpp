@@ -164,7 +164,7 @@ int rect::lua_Contains( lua_State* lua )
 
 void Vec2::lua_Register( lua_State* lua )
 {
-    luaL_Reg funcs[] =
+    luaL_Reg funcs[] =
     {
         { "Length", lua_Length },
         { NULL, NULL }
@@ -363,13 +363,13 @@ int Mat4::lua_Rotation( lua_State* lua )
     if( nargs >= 4 ) // componentwise
     {
         vec3 v( static_cast<float>( lua_tonumber( lua, 1 ) ), static_cast<float>( lua_tonumber( lua, 2 ) ), static_cast<float>( lua_tonumber( lua, 3 ) ) );
-        float angle = lua_tonumber( lua, 4 );
+        float angle = static_cast<float>( lua_tonumber( lua, 4 ) );
         result = Mat4::lua_Write( lua, rotate( mat4(), angle, v ) );
     }
     else if( nargs >= 2 )
     {
         vec3 v = Vec3::lua_Read( lua, 1 );
-        float angle = lua_tonumber( lua, 2 );
+        float angle = static_cast<float>( lua_tonumber( lua, 2 ) );
         result = Mat4::lua_Write( lua, rotate( mat4(), angle, v ) );
     }
     

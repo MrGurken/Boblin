@@ -205,7 +205,7 @@ int Shader::lua_Load( lua_State* lua )
             if( nargs >= 3 )
             {
                 const char* filename = lua_tostring( lua, 2 );
-                int ltype = lua_tonumber( lua, 3 );
+                int ltype = static_cast<int>( lua_tonumber( lua, 3 ) );
                 GLenum gltype = ( ltype == 0 ? GL_VERTEX_SHADER : ( ltype == 1 ? GL_FRAGMENT_SHADER : GL_GEOMETRY_SHADER ) );
                 
                 lua_pushboolean( lua, ptr->Load( filename, gltype ) );
