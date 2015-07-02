@@ -56,7 +56,7 @@ int Input::FindKey( vector<SDL_Keycode>& vec, SDL_Keycode key )
 	int result = -1;
 	for( size_t i=0; i<vec.size() && result < 0; i++ )
 		if( vec[i] == key )
-			result = i;
+			result = static_cast<int>(i);
 	return result;
 }
 

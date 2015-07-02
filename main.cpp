@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Script.h"
 #include "Input.h"
+#include "Sound.h"
 
 int main( int argc, char* argv[] )
 {
@@ -73,7 +74,6 @@ int main( int argc, char* argv[] )
 
 					Input::Instance().SetWindow( window );
 
-					bool validLua = true;
 					bool running = true;
 					while( running )
 					{

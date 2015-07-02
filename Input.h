@@ -1,7 +1,7 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "SDL.h"
+#include "LibIncluder.h"
 #include "maths.h"
 #include <vector>
 using std::vector;
