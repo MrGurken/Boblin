@@ -8,6 +8,7 @@
 #include "transform.hpp"
 using namespace glm;
 
+#include "maths.h"
 #include "Assets.h"
 #include <fstream>
 using std::ifstream;

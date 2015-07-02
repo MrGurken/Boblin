@@ -330,11 +330,11 @@ int Shader::lua_Vec2( lua_State* lua )
     int result = 0;
     
     int nargs = lua_gettop( lua );
-    if( nargs >= 4 )
+    if( nargs >= 2 )
     {
         Shader* ptr = lua_Read( lua, 1 );
         const char* uniform = lua_tostring( lua, 2 );
-        vec2 v( lua_tonumber( lua, 3 ), lua_tonumber( lua, 4 ) );
+        vec2 v = ( nargs >= 4 ? Vec2::lua_Parse( lua, 3 ) : Vec2::lua_Read( lua, 3 ) );
         
         if( ptr )
             ptr->SetUniform( uniform, v );
@@ -352,7 +352,7 @@ int Shader::lua_Vec3( lua_State* lua )
     {
         Shader* ptr = lua_Read( lua, 1 );
         const char* uniform = lua_tostring( lua, 2 );
-        vec3 v( lua_tonumber( lua, 3 ), lua_tonumber( lua, 4 ), lua_tonumber( lua, 5 ) );
+        vec3 v = ( nargs >= 5 ? Vec3::lua_Parse( lua, 3 ) : Vec3::lua_Read( lua, 3 ) );
         
         if( ptr )
             ptr->SetUniform( uniform, v );
@@ -366,15 +366,14 @@ int Shader::lua_Mat4( lua_State* lua )
     int result = 0;
     
     int nargs = lua_gettop( lua );
-    if( nargs )
+    if( nargs >= 3 )
     {
         Shader* ptr = lua_Read( lua, 1 );
         const char* uniform = lua_tostring( lua, 2 );
-        //mat4 m = lua_ReadMat4( lua, 3 );
+        mat4 m = Mat4::lua_Read( lua, 3 );
         
-        // TODO: Complete this
         if( ptr )
-            ptr->SetUniform( uniform, mat4() );
+            ptr->SetUniform( uniform, m );
     }
     
     return result;

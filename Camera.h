@@ -1,6 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "maths.h"
 #include "lua.hpp"
 #include "glm.hpp"
 #include "matrix_transform.hpp"
@@ -21,6 +22,7 @@ public:
 
 	void			SetProjection( float aspectRatio, float fov, float nearplane, float farplane );
 	void			SetProjection( float left, float right, float top, float bottom, float nearplane, float farplane );
+	void			SetProjection( const mat4& projection );
 	void			SetPosition( vec3 position );
 	void			SetRotation( quat rotation );
 

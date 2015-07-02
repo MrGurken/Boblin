@@ -39,6 +39,11 @@ void Camera::SetProjection( float left, float right, float top, float bottom, fl
 	m_projection = ortho( left, right, bottom, top, nearplane, farplane );
 }
 
+void Camera::SetProjection( const mat4& projection )
+{
+	m_projection = projection;
+}
+
 void Camera::SetPosition( vec3 position )
 {
 	m_position = position;
@@ -135,13 +140,15 @@ int Camera::lua_Create( lua_State* lua )
 
 int Camera::lua_Projection( lua_State* lua )
 {
+	int result = 0;
+
 	int nargs = lua_gettop( lua );
 	if( nargs >= 1 )
 	{
 		Camera* camera = lua_Read( lua, 1 );
 		if( camera )
 		{
-			if( nargs >= 6 ) // orthographics
+			if( nargs >= 6 ) // orthographic
 			{
 				camera->SetProjection( static_cast<float>( lua_tonumber( lua, 2 ) ),
 									   static_cast<float>( lua_tonumber( lua, 3 ) ),
@@ -157,10 +164,19 @@ int Camera::lua_Projection( lua_State* lua )
 									   static_cast<float>( lua_tonumber( lua, 4 ) ),
 									   static_cast<float>( lua_tonumber( lua, 5 ) ) );
 			}
+			else if( nargs >= 2 ) // set matrix
+			{
+				mat4 projectionMatrix = Mat4::lua_Read( lua, 2 );
+				camera->m_projection = projectionMatrix;
+			}
+			else // get matrix
+			{
+				result = Mat4::lua_Write( lua, camera->GetProjection() );
+			}
 		}
 	}
 
-	return 0;
+	return result;
 }
 
 int Camera::lua_Position( lua_State* lua )
@@ -179,11 +195,7 @@ int Camera::lua_Position( lua_State* lua )
 			}
 			else // getting
 			{
-				vec3 pos = camera->GetPosition();
-				lua_pushnumber( lua, pos.x );
-				lua_pushnumber( lua, pos.y );
-				lua_pushnumber( lua, pos.z );
-				result = 3;
+				result = Vec3::lua_Write( lua, camera->GetPosition() );
 			}
 		}
 	}
@@ -201,21 +213,25 @@ int Camera::lua_Rotation( lua_State* lua )
 		Camera* camera = lua_Read( lua, 1 );
 		if( camera )
 		{
-			if( nargs >= 5 ) // setting
+			if( nargs >= 5 ) // setting floats
 			{
 				camera->SetRotation( quat( static_cast<float>( lua_tonumber( lua, 2 ) ),
 											static_cast<float>( lua_tonumber( lua, 3 ) ),
 											static_cast<float>( lua_tonumber( lua, 4 ) ),
 											static_cast<float>( lua_tonumber( lua, 5 ) ) ) );
 			}
+			else if( nargs >= 2 ) // setting quat
+			{
+				camera->SetRotation( Quat::lua_Read( lua, 2 ) );
+			}
 			else // getting
 			{
 				quat rot = camera->GetRotation();
-				lua_pushnumber( lua, rot.x );
+				/*lua_pushnumber( lua, rot.x );
 				lua_pushnumber( lua, rot.y );
 				lua_pushnumber( lua, rot.z );
-				lua_pushnumber( lua, rot.w );
-				result = 4;
+				lua_pushnumber( lua, rot.w );*/
+				result = Quat::lua_Write( lua, rot );
 			}
 		}
 	}

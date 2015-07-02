@@ -129,7 +129,6 @@ int GameObject::lua_Write( lua_State* lua, GameObject* object )
 LIMP( Create )
 {
 	GameObject* ptr = new GameObject();
-	// TODO: Possibly add mutex here
 	s_vecObjects.push_back( ptr );
 	return lua_Write( lua, ptr );
 }
@@ -139,7 +138,6 @@ LIMP( Destroy )
 	GameObject* ptr = lua_Read( lua, 1 );
 	if( ptr )
 	{
-		// TODO: Possibly add mutex here
 		vector<GameObject*>::iterator it;
 		for( it = s_vecObjects.begin(); it != s_vecObjects.end(); it++ )
 			if( *it == ptr )
@@ -161,23 +159,29 @@ LIMP( CollisionBounds )
 		GameObject* ptr = lua_Read( lua, 1 );
 		if( ptr )
 		{
-			if( nargs >= 5 ) // setting
+			if( nargs >= 5 ) // setting floats
 			{
-				float x = static_cast<float>( lua_tonumber( lua, 2 ) );
+				/*float x = static_cast<float>( lua_tonumber( lua, 2 ) );
 				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
 				float w = static_cast<float>( lua_tonumber( lua, 4 ) );
 				float h = static_cast<float>( lua_tonumber( lua, 5 ) );
 
-				ptr->SetCollisionBounds( rect( x, y, w, h ) );
+				ptr->SetCollisionBounds( rect( x, y, w, h ) );*/
+				ptr->SetCollisionBounds( rect::lua_Parse( lua, 2 ) );
+			}
+			else if( nargs >= 2 ) // setting
+			{
+				ptr->SetCollisionBounds( rect::lua_Read( lua, 2 ) );
 			}
 			else // getting
 			{
 				rect r = ptr->GetCollisionBounds();
-				lua_pushnumber( lua, r.x );
+				/*lua_pushnumber( lua, r.x );
 				lua_pushnumber( lua, r.y );
 				lua_pushnumber( lua, r.w );
 				lua_pushnumber( lua, r.h );
-				result = 4;
+				result = 4;*/
+				result = rect::lua_Write( lua, r );
 			}
 		}
 	}
@@ -197,21 +201,27 @@ LIMP( RenderBounds )
 		{
 			if( nargs >= 5 ) // setting
 			{
-				float x = static_cast<float>( lua_tonumber( lua, 2 ) );
+				/*float x = static_cast<float>( lua_tonumber( lua, 2 ) );
 				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
 				float w = static_cast<float>( lua_tonumber( lua, 4 ) );
 				float h = static_cast<float>( lua_tonumber( lua, 5 ) );
 
-				ptr->SetRenderBounds( rect( x, y, w, h ) );
+				ptr->SetRenderBounds( rect( x, y, w, h ) );*/
+				ptr->SetRenderBounds( rect::lua_Parse( lua, 2 ) );
 			}
-			else
+			else if( nargs >= 2 ) // setting 
+			{
+				ptr->SetRenderBounds( rect::lua_Read( lua, 2 ) );
+			}
+			else // getting
 			{
 				rect r = ptr->GetRenderBounds();
-				lua_pushnumber( lua, r.x );
+				/*lua_pushnumber( lua, r.x );
 				lua_pushnumber( lua, r.y );
 				lua_pushnumber( lua, r.w );
 				lua_pushnumber( lua, r.h );
-				result = 4;
+				result = 4;*/
+				result = rect::lua_Write( lua, r );
 			}
 		}
 	}
@@ -231,17 +241,23 @@ LIMP( Position )
 		{
 			if( nargs >= 3 ) // setting
 			{
-				float x = static_cast<float>( lua_tonumber( lua, 2 ) );
+				/*float x = static_cast<float>( lua_tonumber( lua, 2 ) );
 				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
 
-				ptr->SetPosition( vec2( x, y ) );
+				ptr->SetPosition( vec2( x, y ) );*/
+				ptr->SetPosition( Vec2::lua_Parse( lua, 2 ) );
+			}
+			else if( nargs >= 2 ) // setting
+			{
+				ptr->SetPosition( Vec2::lua_Read( lua, 2 ) );
 			}
 			else // getting
 			{
 				vec2 v = ptr->GetPosition();
-				lua_pushnumber( lua, v.x );
+				/*lua_pushnumber( lua, v.x );
 				lua_pushnumber( lua, v.y );
-				result = 2;
+				result = 2;*/
+				result = Vec2::lua_Write( lua, v );
 			}
 		}
 	}
@@ -261,17 +277,23 @@ LIMP( Velocity )
 		{
 			if( nargs >= 3 ) // setting
 			{
-				float x = static_cast<float>( lua_tonumber( lua, 2 ) );
+				/*float x = static_cast<float>( lua_tonumber( lua, 2 ) );
 				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
 
-				ptr->SetVelocity( vec2( x, y ) );
+				ptr->SetVelocity( vec2( x, y ) );*/
+				ptr->SetVelocity( Vec2::lua_Parse( lua, 2 ) );
+			}
+			else if( nargs >= 2 ) // setting
+			{
+				ptr->SetVelocity( Vec2::lua_Read( lua, 2 ) );
 			}
 			else // getting
 			{
 				vec2 v = ptr->GetVelocity();
-				lua_pushnumber( lua, v.x );
+				/*lua_pushnumber( lua, v.x );
 				lua_pushnumber( lua, v.y );
-				result = 2;
+				result = 2;*/
+				result = Vec2::lua_Write( lua, v );
 			}
 		}
 	}
@@ -291,17 +313,23 @@ LIMP( Friction )
 		{
 			if( nargs >= 3 ) // setting
 			{
-				float x = static_cast<float>( lua_tonumber( lua, 2 ) );
+				/*float x = static_cast<float>( lua_tonumber( lua, 2 ) );
 				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
 
-				ptr->SetFriction( vec2( x, y ) );
+				ptr->SetFriction( vec2( x, y ) );*/
+				ptr->SetFriction( Vec2::lua_Parse( lua, 2 ) );
+			}
+			else if( nargs >= 2 ) // setting
+			{
+				ptr->SetFriction( Vec2::lua_Read( lua, 2 ) );
 			}
 			else // getting
 			{
 				vec2 v = ptr->GetFriction();
-				lua_pushnumber( lua, v.x );
+				/*lua_pushnumber( lua, v.x );
 				lua_pushnumber( lua, v.y );
-				result = 2;
+				result = 2;*/
+				result = Vec2::lua_Write( lua, v );
 			}
 		}
 	}
@@ -321,21 +349,27 @@ LIMP( Color )
 		{
 			if( nargs >= 5 ) // setting
 			{
-				float r = static_cast<float>( lua_tonumber( lua, 2 ) );
+				/*float r = static_cast<float>( lua_tonumber( lua, 2 ) );
 				float g = static_cast<float>( lua_tonumber( lua, 3 ) );
 				float b = static_cast<float>( lua_tonumber( lua, 4 ) );
 				float a = static_cast<float>( lua_tonumber( lua, 5 ) );
 
-				ptr->SetColor( vec4( r, g, b, a ) );
+				ptr->SetColor( vec4( r, g, b, a ) );*/
+				ptr->SetColor( Vec4::lua_Parse( lua, 2 ) );
+			}
+			else if( nargs >= 2 ) // setting
+			{
+				ptr->SetColor( Vec4::lua_Read( lua, 2 ) );
 			}
 			else // getting
 			{
 				vec4 v = ptr->GetColor();
-				lua_pushnumber( lua, v.r );
+				/*lua_pushnumber( lua, v.r );
 				lua_pushnumber( lua, v.g );
 				lua_pushnumber( lua, v.b );
 				lua_pushnumber( lua, v.a );
-				result = 4;
+				result = 4;*/
+				result = Vec4::lua_Write( lua, v );
 			}
 		}
 	}

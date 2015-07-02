@@ -5,6 +5,8 @@ void Maths::lua_Register( lua_State* lua )
     rect::lua_Register( lua );
     Vec2::lua_Register( lua );
     Vec3::lua_Register( lua );
+	Vec4::lua_Register( lua );
+	Quat::lua_Register( lua );
     Mat4::lua_Register( lua );
 }
 
@@ -91,17 +93,29 @@ void rect::lua_Register( lua_State* lua )
     lua_setglobal( lua, "Rect" );
 }
 
+rect rect::lua_Parse( lua_State* lua, int index )
+{
+	return rect( static_cast<float>( lua_tonumber( lua, index ) ),
+				 static_cast<float>( lua_tonumber( lua, index+1 ) ),
+				 static_cast<float>( lua_tonumber( lua, index+2 ) ),
+				 static_cast<float>( lua_tonumber( lua, index+3 ) ) );
+}
+
 rect rect::lua_Read( lua_State* lua, int index )
 {
     lua_getfield( lua, index, "x" );
+	float x = static_cast<float>( lua_tonumber( lua, -1 ) );
     lua_getfield( lua, index, "y" );
+	float y = static_cast<float>( lua_tonumber( lua, -1 ) );
     lua_getfield( lua, index, "w" );
+	float w = static_cast<float>( lua_tonumber( lua, -1 ) );
     lua_getfield( lua, index, "h" );
-    return rect( static_cast<float>( lua_tonumber( lua, -1 ) ), static_cast<float>( lua_tonumber( lua, -1 ) ),
-                static_cast<float>( lua_tonumber( lua, -1 ) ), static_cast<float>( lua_tonumber( lua, -1 ) ) );
+	float h = static_cast<float>( lua_tonumber( lua, -1 ) );
+
+	return rect( x, y, w, h );
 }
 
-int rect::lua_Write( lua_State* lua, rect value )
+int rect::lua_Write( lua_State* lua, const rect& value )
 {
     lua_newtable( lua );
     lua_pushnumber( lua, value.x );
@@ -177,14 +191,22 @@ void Vec2::lua_Register( lua_State* lua )
     lua_setglobal( lua, "Vec2" );
 }
 
-vec2 Vec2::lua_Read( lua_State* lua, int index )
+vec2 Vec2::lua_Parse( lua_State* lua, int index )
 {
-    lua_getfield( lua, index, "y" );
-    lua_getfield( lua, index, "x" );
-    return vec2( static_cast<float>( lua_tonumber( lua, -1 ) ), static_cast<float>( lua_tonumber( lua, -1 ) ) );
+	return vec2( static_cast<float>( lua_tonumber( lua, index ) ),
+				 static_cast<float>( lua_tonumber( lua, index+1 ) ) );
 }
 
-int Vec2::lua_Write( lua_State* lua, vec2 value )
+vec2 Vec2::lua_Read( lua_State* lua, int index )
+{
+    lua_getfield( lua, index, "x" );
+	float x = static_cast<float>( lua_tonumber( lua, -1 ) );
+    lua_getfield( lua, index, "y" );
+	float y = static_cast<float>( lua_tonumber( lua, -1 ) );
+    return vec2( x, y );
+}
+
+int Vec2::lua_Write( lua_State* lua, const vec2& value )
 {
     lua_newtable( lua );
     lua_pushnumber( lua, value.x );
@@ -228,15 +250,25 @@ void Vec3::lua_Register( lua_State* lua )
     lua_setglobal( lua, "Vec3" );
 }
 
-vec3 Vec3::lua_Read( lua_State* lua, int index )
+vec3 Vec3::lua_Parse( lua_State* lua, int index )
 {
-    lua_getfield( lua, index, "z" );
-    lua_getfield( lua, index, "y" );
-    lua_getfield( lua, index, "x" );
-    return vec3( static_cast<float>( lua_tonumber( lua, -1 ) ), static_cast<float>( lua_tonumber( lua, -1 ) ), static_cast<float>( lua_tonumber( lua, -1 ) ) );
+	return vec3( static_cast<float>( lua_tonumber( lua, index ) ),
+				 static_cast<float>( lua_tonumber( lua, index+1 ) ),
+				 static_cast<float>( lua_tonumber( lua, index+3 ) ) );
 }
 
-int Vec3::lua_Write( lua_State* lua, vec3 value )
+vec3 Vec3::lua_Read( lua_State* lua, int index )
+{
+    lua_getfield( lua, index, "x" );
+	float x = static_cast<float>( lua_tonumber( lua, -1 ) );
+    lua_getfield( lua, index, "y" );
+	float y = static_cast<float>( lua_tonumber( lua, -1 ) );
+    lua_getfield( lua, index, "z" );
+	float z = static_cast<float>( lua_tonumber( lua, -1 ) );
+    return vec3( x, y, z );
+}
+
+int Vec3::lua_Write( lua_State* lua, const vec3& value )
 {
     lua_newtable( lua );
     lua_pushnumber( lua, value.x );
@@ -261,6 +293,102 @@ int Vec3::lua_Length( lua_State* lua )
     }
     
     return result;
+}
+
+// ***********************************************************************************
+// VEC4
+// ***********************************************************************************
+
+void Vec4::lua_Register( lua_State* lua )
+{
+}
+
+vec4 Vec4::lua_Parse( lua_State* lua, int index )
+{
+	return vec4( static_cast<float>( lua_tonumber( lua, index ) ),
+				 static_cast<float>( lua_tonumber( lua, index+1 ) ),
+				 static_cast<float>( lua_tonumber( lua, index+2 ) ),
+				 static_cast<float>( lua_tonumber( lua, index+3 ) ) );
+}
+
+vec4 Vec4::lua_Read( lua_State* lua, int index )
+{
+	vec4 result;
+	if( lua_istable( lua, index ) )
+	{
+		lua_getfield( lua, index, "x" );
+		result.x = static_cast<float>( lua_tonumber( lua, -1 ) );
+		lua_getfield( lua, index, "y" );
+		result.y = static_cast<float>( lua_tonumber( lua, -1 ) );
+		lua_getfield( lua, index, "z" );
+		result.z = static_cast<float>( lua_tonumber( lua, -1 ) );
+		lua_getfield( lua, index, "w" );
+		result.w = static_cast<float>( lua_tonumber( lua, -1 ) );
+	}
+
+	return result;
+}
+
+int Vec4::lua_Write( lua_State* lua, const vec4& value )
+{
+	lua_newtable( lua );
+	lua_pushnumber( lua, value.x );
+	lua_setfield( lua, -2, "x" );
+	lua_pushnumber( lua, value.y );
+	lua_setfield( lua, -2, "y" );
+	lua_pushnumber( lua, value.z );
+	lua_setfield( lua, -2, "z" );
+	lua_pushnumber( lua, value.w );
+	lua_setfield( lua, -2, "w" );
+	return 1;
+}
+
+// ***********************************************************************************
+// QUAT
+// ***********************************************************************************
+
+void Quat::lua_Register( lua_State* lua )
+{
+}
+
+quat Quat::lua_Parse( lua_State* lua, int index )
+{
+	return quat( static_cast<float>( lua_tonumber( lua, index ) ),
+				 static_cast<float>( lua_tonumber( lua, index+1 ) ),
+				 static_cast<float>( lua_tonumber( lua, index+2 ) ),
+				 static_cast<float>( lua_tonumber( lua, index+3 ) ) );
+}
+
+quat Quat::lua_Read( lua_State* lua, int index )
+{
+	quat result;
+	if( lua_istable( lua, index ) )
+	{
+		lua_getfield( lua, index, "x" );
+		result.x = static_cast<float>( lua_tonumber( lua, -1 ) );
+		lua_getfield( lua, index, "y" );
+		result.y = static_cast<float>( lua_tonumber( lua, -1 ) );
+		lua_getfield( lua, index, "z" );
+		result.z = static_cast<float>( lua_tonumber( lua, -1 ) );
+		lua_getfield( lua, index, "w" );
+		result.w = static_cast<float>( lua_tonumber( lua, -1 ) );
+	}
+
+	return result;
+}
+
+int Quat::lua_Write( lua_State* lua, const quat& value )
+{
+	lua_newtable( lua );
+	lua_pushnumber( lua, value.x );
+	lua_setfield( lua, -2, "x" );
+	lua_pushnumber( lua, value.y );
+	lua_setfield( lua, -2, "y" );
+	lua_pushnumber( lua, value.z );
+	lua_setfield( lua, -2, "z" );
+	lua_pushnumber( lua, value.w );
+	lua_setfield( lua, -2, "w" );
+	return 1;
 }
 
 // ***********************************************************************************

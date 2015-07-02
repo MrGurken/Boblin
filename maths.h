@@ -3,6 +3,7 @@
 
 #include "lua.hpp"
 #include "glm.hpp"
+#include "quaternion.hpp"
 #include "matrix_transform.hpp"
 using namespace glm;
 
@@ -49,8 +50,9 @@ public:
 	bool Contains( vec2 point ) const;
     
     static void lua_Register( lua_State* lua );
+	static rect lua_Parse( lua_State* lua, int index );
     static rect lua_Read( lua_State* lua, int index );
-    static int lua_Write( lua_State* lua, rect value );
+    static int lua_Write( lua_State* lua, const rect& value );
     static int lua_Center( lua_State* lua );
     static int lua_Intersect( lua_State* lua );
     static int lua_Contains( lua_State* lua );
@@ -61,18 +63,36 @@ public:
 namespace Vec2
 {
     void lua_Register( lua_State* lua );
+	vec2 lua_Parse( lua_State* lua, int index );
     vec2 lua_Read( lua_State* lua, int index );
-    int lua_Write( lua_State* lua, vec2 value );
+    int lua_Write( lua_State* lua, const vec2& value );
     int lua_Length( lua_State* lua );
 }
 
 namespace Vec3
 {
     void lua_Register( lua_State* lua );
+	vec3 lua_Parse( lua_State* lua, int index );
     vec3 lua_Read( lua_State* lua, int index );
-    int lua_Write( lua_State* lua, vec3 value );
+    int lua_Write( lua_State* lua, const vec3& value );
     int lua_Length( lua_State* lua );
 }
+
+namespace Vec4
+{
+	void lua_Register( lua_State* lua );
+	vec4 lua_Parse( lua_State* lua, int index );
+	vec4 lua_Read( lua_State* lua, int index );
+	int lua_Write( lua_State* lua, const vec4& value );
+}
+
+namespace Quat
+{
+	void lua_Register( lua_State* lua );
+	quat lua_Parse( lua_State* lua, int index );
+	quat lua_Read( lua_State* lua, int index );
+	int lua_Write( lua_State* lua, const quat& value );
+};
 
 namespace Mat4
 {
