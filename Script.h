@@ -4,9 +4,6 @@
 #include "lua.hpp"
 #include <vector>
 using std::vector;
-#include <map>
-using std::map;
-using std::pair;
 
 #include "maths.h"
 #include "File.h"
@@ -27,14 +24,21 @@ public:
 	lua_State*	GetState() const;
 
 private:
-	Script( const Script& ref ){}
-	Script& operator=( const Script& ref ){ return *this; }
-
 	bool		m_bValid;
 	string		m_strFilename;
 	FileInfo	m_fileInfo;
 	lua_State*	m_pLua;
 };
+
+struct FuncRef
+{
+	FuncRef() : valid( false ){}
+
+	int ref;
+	int valid; // 32 bit alignment
+};
+
+#define RUNTIME_MAX_REFS 32
 
 class Runtime
 {
@@ -46,8 +50,8 @@ public:
 
 	bool		Hotload();
 	bool		Run( const string& filename );
-	bool		Refer( const string& func );
-	bool		UnRefer( const string& func );
+	void		Refer( int ref );
+	void		UnRefer( int ref );
 
 	void		Update();
 
@@ -63,13 +67,15 @@ private:
 	Runtime( const Runtime& ref );
 	Runtime& operator=( const Runtime& ref ){ return *this; }
 
-	typedef map<string,int>::iterator ref_it;
+	typedef vector<int>::iterator ref_it;
 	typedef vector<Script>::iterator script_it;
 	typedef vector<Script>::reverse_iterator script_rit;
 
+	int				FindRef( int ref );
+
 	lua_State*		m_pLua;
-	map<string,int>	m_mapRefs;
 	vector<Script>	m_vecScripts;
+	FuncRef			m_refs[RUNTIME_MAX_REFS];
 };
 
 #endif

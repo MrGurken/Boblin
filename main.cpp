@@ -69,15 +69,7 @@ int main( int argc, char* argv[] )
 					shader.AddUniform( "ViewMatrix" );
 					shader.AddUniform( "ProjectionMatrix" );
 
-					// TODO: Instead of assuming that the function we are looking for is
-					// called 'main', let Lua register it's main function with us.
-					int mainFunctionRef = -1;
-					Script lua;
-					if( lua.Run( "./res/scripts/main.lua" ) )
-					{
-						lua_getglobal( lua, "main" );
-						mainFunctionRef = luaL_ref( lua, LUA_REGISTRYINDEX );
-					}
+					Runtime::Instance().Run( "./res/scripts/main.lua" );
 
 					Input::Instance().SetWindow( window );
 
@@ -90,18 +82,8 @@ int main( int argc, char* argv[] )
 							running = false;
 
 						// Update
-						if( validLua )
-						{
-							lua_rawgeti( lua, LUA_REGISTRYINDEX, mainFunctionRef );
-							if( lua_pcall( lua, 0, 0, 0 ) )
-							{
-								printf( "Lua error: %s\n", lua_tostring( lua, -1 ) );
-								validLua = false;
-							}
-						}
-
-						if( lua.Hotload() )
-							validLua = true;
+						Runtime::Instance().Hotload();
+						Runtime::Instance().Update();
 
 						// Render
 						glClearColor( 1.0f, 0.0f, 0.0f, 0.0f );
@@ -124,8 +106,6 @@ int main( int argc, char* argv[] )
 						// Adjust time
 						SDL_Delay( 100 );
 					}
-
-					luaL_unref( lua, LUA_REGISTRYINDEX, mainFunctionRef );
 				}
 
 				SDL_GL_DeleteContext( glContext );
