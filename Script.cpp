@@ -5,6 +5,11 @@ Script::Script( lua_State* lua )
 {
 }
 
+Script::Script( const Script& ref )
+	: m_pLua( ref.m_pLua ), m_bValid( ref.m_bValid )
+{
+}
+
 Script::~Script()
 {
 }
@@ -73,6 +78,7 @@ Runtime::Runtime()
 	Texture::lua_Register( m_pLua );
 	Camera::lua_Register( m_pLua );
 	Maths::lua_Register( m_pLua );
+	Input::lua_Register( m_pLua );
 }
 
 Runtime::~Runtime()
@@ -97,9 +103,9 @@ bool Runtime::Hotload()
 
 bool Runtime::Run( const string& filename )
 {
-	m_vecScripts.push_back( Script( m_pLua ) );
-	script_rit rit = m_vecScripts.rbegin();
-	return rit->Run( filename );
+	Script newScript( m_pLua );
+	m_vecScripts.push_back( newScript );
+	return newScript.Run( filename );
 }
 
 void Runtime::Refer( int ref )

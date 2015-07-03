@@ -11,11 +11,13 @@ using std::vector;
 #include "Texture.h"
 #include "FileInfo.h"
 #include "Camera.h"
+#include "Input.h"
 
 class Script
 {
 public:
 	Script( lua_State* lua );
+	Script( const Script& ref );
 	virtual ~Script();
 
 	bool		Hotload();
