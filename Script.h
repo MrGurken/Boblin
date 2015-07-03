@@ -39,7 +39,6 @@ struct FuncRef
 };
 
 #define RUNTIME_MAX_REFS 32
-#define RUNTIME_REF_INDICES 2
 
 class Runtime
 {
@@ -51,18 +50,16 @@ public:
 
 	bool			Hotload();
 	bool			Run( const string& filename );
-	void			Refer( int ref, int update );
+	void			Refer( int ref );
 	void			Unrefer( int ref );
 
 	void			Update();
-	void			Render();
 
 	lua_State*		GetState() const;
 
 	static void		lua_Register( lua_State* lua );
 	static int		lua_Run( lua_State* lua );
-	static int		lua_ReferUpdate( lua_State* lua );
-	static int		lua_ReferRender( lua_State* lua );
+	static int		lua_Refer( lua_State* lua );
 	static int		lua_Unrefer( lua_State* lua );
 
 private:
@@ -73,12 +70,11 @@ private:
 	typedef vector<Script>::iterator script_it;
 	typedef vector<Script>::reverse_iterator script_rit;
 
-	int				FindRef( FuncRef refs[RUNTIME_MAX_REFS], int ref );
+	int				FindRef( int ref );
 
 	lua_State*		m_pLua;
 	vector<Script>	m_vecScripts;
-	FuncRef			m_updateRefs[RUNTIME_MAX_REFS];
-	FuncRef			m_renderRefs[RUNTIME_MAX_REFS];
+	FuncRef			m_refs[RUNTIME_MAX_REFS];
 };
 
 #endif

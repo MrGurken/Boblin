@@ -102,19 +102,17 @@ bool Runtime::Run( const string& filename )
 	return rit->Run( filename );
 }
 
-void Runtime::Refer( int ref, int update )
+void Runtime::Refer( int ref )
 {
-	FuncRef* ptr = ( update ? m_updateRefs : m_renderRefs );
-
-	int index = FindRef( ptr, ref );
+	int index = FindRef( ref );
 	if( index < 0 )
 	{
 		for( int i=0; i<RUNTIME_MAX_REFS; i++ )
 		{
-			if( !ptr[i].valid )
+			if( !m_refs[i].valid )
 			{
-				ptr[i].ref = ref;
-				ptr[i].valid = true;
+				m_refs[i].ref = ref;
+				m_refs[i].valid = true;
 				break;
 			}
 		}
@@ -123,31 +121,19 @@ void Runtime::Refer( int ref, int update )
 
 void Runtime::Unrefer( int ref )
 {
-	bool unrefed = false;
-
-	int index = FindRef( m_updateRefs, ref );
+	int index = FindRef( ref );
 	if( index >= 0 )
 	{
 		luaL_unref( m_pLua, LUA_REGISTRYINDEX, ref );
-		m_updateRefs[index].valid = false;
-
-		unrefed = true;
-	}
-
-	index = FindRef( m_renderRefs, ref );
-	if( index >= 0 )
-	{
-		if( !unrefed )
-			luaL_unref( m_pLua, LUA_REGISTRYINDEX, ref );
-		m_renderRefs[index].valid = false;
+		m_refs[index].valid = false;
 	}
 }
 
-int Runtime::FindRef( FuncRef refs[RUNTIME_MAX_REFS], int ref )
+int Runtime::FindRef( int ref )
 {
 	int index = -1;
 	for( int i=0; i<RUNTIME_MAX_REFS && index<0; i++ )
-		if( refs[i].ref == ref && refs[i].valid )
+		if( m_refs[i].ref == ref && m_refs[i].valid )
 			index = i;
 	return index;
 }
@@ -156,33 +142,15 @@ void Runtime::Update()
 {
 	for( int i=0; i<RUNTIME_MAX_REFS; i++ )
 	{
-		if( m_updateRefs[i].valid )
+		if( m_refs[i].valid )
 		{
-			lua_rawgeti( m_pLua, LUA_REGISTRYINDEX, m_updateRefs[i].ref );
+			lua_rawgeti( m_pLua, LUA_REGISTRYINDEX, m_refs[i].ref );
 			if( lua_pcall( m_pLua, 0, 0, 0 ) )
 			{
 				printf( "Script.cpp: Lua error: %s\n", lua_tostring( m_pLua, -1 ) );
 
-				luaL_unref( m_pLua, LUA_REGISTRYINDEX, m_updateRefs[i].ref );
-				m_updateRefs[i].valid = false;
-			}
-		}
-	}
-}
-
-void Runtime::Render()
-{
-	for( int i=0; i<RUNTIME_MAX_REFS; i++ )
-	{
-		if( m_renderRefs[i].valid )
-		{
-			lua_rawgeti( m_pLua, LUA_REGISTRYINDEX, m_renderRefs[i].ref );
-			if( lua_pcall( m_pLua, 0, 0, 0 ) )
-			{
-				printf( "Script.cpp: Lua error: %s\n", lua_tostring( m_pLua, -1 ) );
-
-				luaL_unref( m_pLua, LUA_REGISTRYINDEX, m_renderRefs[i].ref );
-				m_renderRefs[i].valid = false;
+				luaL_unref( m_pLua, LUA_REGISTRYINDEX, m_refs[i].ref );
+				m_refs[i].valid = false;
 			}
 		}
 	}
@@ -196,8 +164,7 @@ lua_State* Runtime::GetState() const
 void Runtime::lua_Register( lua_State* lua )
 {
 	lua_register( lua, "Run", lua_Run );
-	lua_register( lua, "ReferUpdate", lua_ReferUpdate );
-	lua_register( lua, "ReferRender", lua_ReferRender );
+	lua_register( lua, "Refer", lua_Refer );
 	lua_register( lua, "Unrefer", lua_Unrefer );
 }
 
@@ -215,29 +182,14 @@ int Runtime::lua_Run( lua_State* lua )
 	return result;
 }
 
-int Runtime::lua_ReferUpdate( lua_State* lua )
+int Runtime::lua_Refer( lua_State* lua )
 {
 	int result = 0;
 
 	if( lua_gettop( lua ) >= 1 && lua_isfunction( lua, 1 ) )
 	{
 		int ref = luaL_ref( lua, LUA_REGISTRYINDEX );
-		Runtime::Instance().Refer( ref, true );
-		lua_pushnumber( lua, ref );
-		result = 1;
-	}
-
-	return result;
-}
-
-int Runtime::lua_ReferRender( lua_State* lua )
-{
-	int result = 0;
-
-	if( lua_gettop( lua ) >= 1 && lua_isfunction( lua, 1 ) )
-	{
-		int ref = luaL_ref( lua, LUA_REGISTRYINDEX );
-		Runtime::Instance().Refer( ref, false );
+		Runtime::Instance().Refer( ref );
 		lua_pushnumber( lua, ref );
 		result = 1;
 	}

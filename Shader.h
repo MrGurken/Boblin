@@ -41,20 +41,6 @@ public:
 	void	SetUniform( const string& uniform, vec2 value );
 	void	SetUniform( const string& uniform, vec3 value );
 	void	SetUniform( const string& uniform, mat4 value );
-    
-    static void lua_Register( lua_State* lua );
-    static Shader* lua_Read( lua_State* lua, int index );
-    static int lua_Write( lua_State* lua, Shader* shader );
-    static int lua_Load( lua_State* lua );
-    static int lua_Link( lua_State* lua );
-    static int lua_Bind( lua_State* lua );
-    static int lua_Destroy( lua_State* lua );
-    static int lua_AddUniform( lua_State* lua );
-    static int lua_Int( lua_State* lua );
-    static int lua_Float( lua_State* lua );
-    static int lua_Vec2( lua_State* lua );
-    static int lua_Vec3( lua_State* lua );
-    static int lua_Mat4( lua_State* lua );
 
 private:
 	GLuint	m_glProgram;

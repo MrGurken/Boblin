@@ -67,6 +67,7 @@ namespace Vec2
     vec2 lua_Read( lua_State* lua, int index );
     int lua_Write( lua_State* lua, const vec2& value );
     int lua_Length( lua_State* lua );
+	int lua_Normalize( lua_State* lua );
 }
 
 namespace Vec3
@@ -76,6 +77,7 @@ namespace Vec3
     vec3 lua_Read( lua_State* lua, int index );
     int lua_Write( lua_State* lua, const vec3& value );
     int lua_Length( lua_State* lua );
+	int lua_Normalize( lua_State* lua );
 }
 
 namespace Vec4
@@ -84,6 +86,8 @@ namespace Vec4
 	vec4 lua_Parse( lua_State* lua, int index );
 	vec4 lua_Read( lua_State* lua, int index );
 	int lua_Write( lua_State* lua, const vec4& value );
+	int lua_Length( lua_State* lua );
+	int lua_Normalize( lua_State* lua );
 }
 
 namespace Quat

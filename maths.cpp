@@ -231,6 +231,19 @@ int Vec2::lua_Length( lua_State *lua )
     return result;
 }
 
+int Vec2::lua_Normalize( lua_State* lua )
+{
+	int result = 0;
+	if( lua_gettop( lua ) >= 1 )
+	{
+		vec2 v = lua_Read( lua, 1 );
+		v /= v.length();
+		result = lua_Write( lua, v );
+	}
+
+	return result;
+}
+
 // ***********************************************************************************
 // VEC 3
 // ***********************************************************************************
@@ -295,6 +308,19 @@ int Vec3::lua_Length( lua_State* lua )
     return result;
 }
 
+int Vec3::lua_Normalize( lua_State* lua )
+{
+	int result = 0;
+	if( lua_gettop( lua ) >= 1 )
+	{
+		vec3 v = lua_Read( lua, 1 );
+		v /= v.length();
+		result = lua_Write( lua, v );
+	}
+
+	return result;
+}
+
 // ***********************************************************************************
 // VEC4
 // ***********************************************************************************
@@ -341,6 +367,32 @@ int Vec4::lua_Write( lua_State* lua, const vec4& value )
 	lua_pushnumber( lua, value.w );
 	lua_setfield( lua, -2, "w" );
 	return 1;
+}
+
+int Vec4::lua_Length( lua_State* lua )
+{
+	int result = 0;
+	if( lua_gettop( lua ) >= 1 )
+	{
+		vec4 v = lua_Read( lua, 1 );
+		lua_pushnumber( lua, v.length() );
+		result = 1;
+	}
+
+	return result;
+}
+
+int Vec4::lua_Normalize( lua_State* lua )
+{
+	int result = 0;
+	if( lua_gettop( lua ) >= 1 )
+	{
+		vec4 v = lua_Read( lua, 1 );
+		v /= v.length();
+		result = lua_Write( lua, v );
+	}
+
+	return result;
 }
 
 // ***********************************************************************************
