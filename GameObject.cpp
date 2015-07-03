@@ -34,7 +34,7 @@ GameObject::~GameObject()
 void GameObject::Update()
 {
 	m_position += m_velocity;
-	m_velocity += m_friction;
+	m_velocity *= m_friction;
 }
 
 void GameObject::Render( Shader* shader )

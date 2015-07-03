@@ -19,6 +19,7 @@ public:
 	int				GetStartY() const;
 	int				GetWidth() const;
 	int				GetHeight() const;
+	int				GetFPS() const;
 	const string&	GetTitle() const;
 	const string&	GetScriptFolder() const;
 
@@ -31,6 +32,7 @@ private:
 	int				m_iStartY;
 	int				m_iWidth;
 	int				m_iHeight;
+	int				m_iFPS;
 	string			m_strTitle;
 	string			m_strScriptFolder;
 };

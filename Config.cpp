@@ -17,6 +17,7 @@ bool Config::Load( const string& filename )
 		stream >> m_iStartY;
 		stream >> m_iWidth;
 		stream >> m_iHeight;
+		stream >> m_iFPS;
 		stream.ignore();
 
 		getline( stream, m_strTitle );
@@ -29,6 +30,7 @@ bool Config::Load( const string& filename )
 	return result;
 }
 
+int Config::GetFPS() const { return m_iFPS; }
 int Config::GetStartX() const { return m_iStartX; }
 int Config::GetStartY() const { return m_iStartY; }
 int Config::GetWidth() const { return m_iWidth; }

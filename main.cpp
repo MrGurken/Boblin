@@ -87,9 +87,13 @@ int main( int argc, char* argv[] )
 
 					Input::Instance().SetWindow( window );
 
+					const unsigned int targetTicks = 1000 / Config::Instance().GetFPS();
+
 					bool running = true;
 					while( running )
 					{
+						unsigned int startTick = SDL_GetTicks();
+
 						running = Input::Instance().Update();
 						if( Input::Instance().KeyDown( SDLK_ESCAPE ) )
 							running = false;
@@ -97,6 +101,8 @@ int main( int argc, char* argv[] )
 						// Update
 						Runtime::Instance().Hotload();
 						Runtime::Instance().Update();
+
+						GameObject::UpdateAll();
 
 						// Render
 						glClearColor( 1.0f, 0.0f, 0.0f, 0.0f );
@@ -116,7 +122,9 @@ int main( int argc, char* argv[] )
 						SDL_GL_SwapWindow( window );
 
 						// Adjust time
-						SDL_Delay( 100 );
+						unsigned int tickDif = SDL_GetTicks() - startTick;
+						if( tickDif < targetTicks )
+							SDL_Delay( targetTicks - tickDif );
 					}
 				}
 
