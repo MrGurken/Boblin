@@ -57,7 +57,7 @@ public:
     static int lua_Mat4( lua_State* lua );
 
 private:
-	GLuint m_glProgram;
+	GLuint	m_glProgram;
 	map<string,GLuint> m_mapUniforms;
 };
 
