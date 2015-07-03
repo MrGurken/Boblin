@@ -9,10 +9,17 @@
 #include "Script.h"
 #include "Input.h"
 #include "Sound.h"
+#include "Config.h"
 
 int main( int argc, char* argv[] )
 {
 	int result = 0;
+
+	if( !Config::Instance().Load( "./config.txt" ) )
+	{
+		printf( "main.cpp: Failed to load configuration file.\n" );
+		return -1;
+	}
 
 	if( SDL_Init( SDL_INIT_EVERYTHING ) < 0 )
 	{
@@ -24,8 +31,13 @@ int main( int argc, char* argv[] )
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
         SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
-		// TODO: Enable config file for window size and title
-		SDL_Window* window = SDL_CreateWindow( "Boblin", 1080, 128, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
+
+		SDL_Window* window = SDL_CreateWindow( Config::Instance().GetTitle().c_str(),
+											   Config::Instance().GetStartX(),
+											   Config::Instance().GetStartY(),
+											   Config::Instance().GetWidth(),
+											   Config::Instance().GetHeight(),
+											   SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
 
 		if( window )
 		{
@@ -70,7 +82,8 @@ int main( int argc, char* argv[] )
 					shader.AddUniform( "ViewMatrix" );
 					shader.AddUniform( "ProjectionMatrix" );
 
-					Runtime::Instance().Run( "./res/scripts/main.lua" );
+					string mainScript = Config::Instance().GetScriptFolder() + "/main.lua";
+					Runtime::Instance().Run( mainScript );
 
 					Input::Instance().SetWindow( window );
 
@@ -90,7 +103,6 @@ int main( int argc, char* argv[] )
 						glClear( GL_COLOR_BUFFER_BIT );
 
 						shader.Bind();
-						//texture->Bind();
 
 						Camera* camera = Camera::GetActive();
 						if( camera )
