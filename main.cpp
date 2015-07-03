@@ -99,6 +99,8 @@ int main( int argc, char* argv[] )
 							running = false;
 
 						// Update
+						// TODO: Add command line argument for enabling/disabling
+						// things like hotloading
 						Runtime::Instance().Hotload();
 						Runtime::Instance().Update();
 
