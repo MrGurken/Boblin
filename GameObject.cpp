@@ -51,6 +51,11 @@ void GameObject::Render( Shader* shader )
 	quad->Render();
 }
 
+bool GameObject::Collides( const GameObject& ref )
+{
+	return ( m_collisionBounds.Intersect( ref.m_collisionBounds ) );
+}
+
 void GameObject::UpdateAll()
 {
 	for( vector<GameObject*>::iterator it = s_vecObjects.begin(); it != s_vecObjects.end(); it++ )
@@ -423,6 +428,25 @@ LIMP( Alive )
 				lua_pushboolean( lua, ptr->GetAlive() );
 				result = 1;
 			}
+		}
+	}
+
+	return result;
+}
+
+LIMP( Collides )
+{
+	int result = 0;
+
+	int nargs = lua_gettop( lua );
+	if( nargs >= 2 )
+	{
+		GameObject* a = lua_Read( lua, 1 );
+		GameObject* b = lua_Read( lua, 2 );
+		if( a && b )
+		{
+			lua_pushboolean( lua, a->Collides( *b ) );
+			result = 1;
 		}
 	}
 

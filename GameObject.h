@@ -24,6 +24,8 @@ public:
 	void Update();
 	void Render( Shader* shader );
 
+	bool Collides( const GameObject& ref );
+
 	static void UpdateAll();
 	static void RenderAll( Shader* shader );
 
@@ -58,6 +60,7 @@ public:
 	LDEC( Color );
 	LDEC( Texture );
 	LDEC( Alive );
+	LDEC( Collides );
 
 private:
 	rect m_collisionBounds;
