@@ -6,7 +6,8 @@ Script::Script( lua_State* lua )
 }
 
 Script::Script( const Script& ref )
-	: m_pLua( ref.m_pLua ), m_bValid( ref.m_bValid )
+	: m_pLua( ref.m_pLua ), m_bValid( ref.m_bValid ),
+	m_strFilename( ref.m_strFilename ),	m_fileInfo( ref.m_fileInfo )
 {
 }
 
@@ -23,7 +24,7 @@ bool Script::Hotload()
 		FileInfo curInfo( m_strFilename );
 		if( curInfo != m_fileInfo )
 		{
-			printf( "Script.cpp: Hotloading.\n" );
+			printf( "Script.cpp: Hotloading = %s\n", m_strFilename.c_str() );
 			Run( m_strFilename );
 
 			result = true;
@@ -104,8 +105,10 @@ bool Runtime::Hotload()
 bool Runtime::Run( const string& filename )
 {
 	Script newScript( m_pLua );
+	bool result = newScript.Run( filename );
 	m_vecScripts.push_back( newScript );
-	return newScript.Run( filename );
+	return result;
+	//return newScript.Run( filename );
 }
 
 void Runtime::Refer( int ref )

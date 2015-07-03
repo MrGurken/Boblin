@@ -181,6 +181,7 @@ void Vec2::lua_Register( lua_State* lua )
     luaL_Reg funcs[] =
     {
         { "Length", lua_Length },
+		{ "Normalize", lua_Normalize },
         { NULL, NULL }
     };
     
@@ -224,7 +225,7 @@ int Vec2::lua_Length( lua_State *lua )
     if( lua_gettop( lua ) >= 1 )
     {
         vec2 v = lua_Read( lua, 1 );
-        lua_pushnumber( lua, v.length() );
+        lua_pushnumber( lua, Length( v ) );
         result = 1;
     }
     
@@ -237,11 +238,16 @@ int Vec2::lua_Normalize( lua_State* lua )
 	if( lua_gettop( lua ) >= 1 )
 	{
 		vec2 v = lua_Read( lua, 1 );
-		v /= v.length();
+		v /= Length( v );
 		result = lua_Write( lua, v );
 	}
 
 	return result;
+}
+
+float Vec2::Length( const vec2& v )
+{
+	return sqrtf( v.x*v.x+v.y*v.y );
 }
 
 // ***********************************************************************************
@@ -253,6 +259,7 @@ void Vec3::lua_Register( lua_State* lua )
     luaL_Reg funcs[] =
     {
         { "Length", lua_Length },
+		{ "Normalize", lua_Normalize },
         { NULL, NULL }
     };
     
@@ -301,7 +308,7 @@ int Vec3::lua_Length( lua_State* lua )
     if( lua_gettop( lua ) >= 1 )
     {
         vec3 v = lua_Read( lua, 1 );
-        lua_pushnumber( lua, v.length() );
+        lua_pushnumber( lua, Length( v ) );
         result = 1;
     }
     
@@ -314,11 +321,16 @@ int Vec3::lua_Normalize( lua_State* lua )
 	if( lua_gettop( lua ) >= 1 )
 	{
 		vec3 v = lua_Read( lua, 1 );
-		v /= v.length();
+		v /= Length( v );
 		result = lua_Write( lua, v );
 	}
 
 	return result;
+}
+
+float Vec3::Length( const vec3& v )
+{
+	return sqrtf( v.x*v.x + v.y*v.y + v.z*v.z );
 }
 
 // ***********************************************************************************
@@ -327,6 +339,18 @@ int Vec3::lua_Normalize( lua_State* lua )
 
 void Vec4::lua_Register( lua_State* lua )
 {
+	luaL_Reg funcs[] =
+    {
+        { "Length", lua_Length },
+		{ "Normalize", lua_Normalize },
+        { NULL, NULL }
+    };
+    
+    luaL_newmetatable( lua, "Vec4" );
+    luaL_setfuncs( lua, funcs, 0);
+    lua_pushvalue( lua, -1 );
+    lua_setfield( lua, -2, "__index" );
+    lua_setglobal( lua, "Vec4" );
 }
 
 vec4 Vec4::lua_Parse( lua_State* lua, int index )
@@ -393,6 +417,11 @@ int Vec4::lua_Normalize( lua_State* lua )
 	}
 
 	return result;
+}
+
+float Vec4::Length( const vec4& v )
+{
+	return sqrtf( v.x*v.x + v.y*v.y + v.z*v.z + v.w*v.w );
 }
 
 // ***********************************************************************************
