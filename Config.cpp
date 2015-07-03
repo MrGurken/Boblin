@@ -17,6 +17,7 @@ bool Config::Load( const string& filename )
 		stream >> m_iStartY;
 		stream >> m_iWidth;
 		stream >> m_iHeight;
+		stream.ignore();
 
 		getline( stream, m_strTitle );
 		getline( stream, m_strScriptFolder );
