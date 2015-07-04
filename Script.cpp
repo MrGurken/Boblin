@@ -56,7 +56,8 @@ bool Script::Run( const string& filename )
 	return result;
 }
 
-lua_State* Script::GetState() const { return m_pLua; }
+const string& Script::GetFilename() const { return m_strFilename; }
+const FileInfo& Script::GetFileInfo() const { return m_fileInfo; }
 
 // *******************************************************************
 // Runtime
@@ -69,6 +70,7 @@ Runtime& Runtime::Instance()
 }
 
 Runtime::Runtime()
+	: m_bRunning( true )
 {
 	m_pLua = luaL_newstate();
 
@@ -92,6 +94,11 @@ Runtime::operator lua_State *() const
 	return m_pLua;
 }
 
+void Runtime::Quit()
+{
+	m_bRunning = false;
+}
+
 bool Runtime::Hotload()
 {
 	bool result = false;
@@ -104,11 +111,34 @@ bool Runtime::Hotload()
 
 bool Runtime::Run( const string& filename )
 {
-	Script newScript( m_pLua );
-	bool result = newScript.Run( filename );
-	m_vecScripts.push_back( newScript );
+	bool result = false;
+	bool found = false;
+
+	for( script_it it = m_vecScripts.begin(); it != m_vecScripts.end() && !found; it++ )
+	{
+		// Have we already run the requested script?
+		if( filename.compare( it->GetFilename() ) )
+		{
+			FileInfo curinfo;
+			curinfo.Get( filename );
+
+			// Has it been modified since we last ran it?
+			if( curinfo != it->GetFileInfo() )
+			{
+				result = it->Run( filename );
+				found = true;
+			}
+		}
+	}
+
+	if( !found )
+	{
+		Script newScript( m_pLua );
+		result = newScript.Run( filename );
+		m_vecScripts.push_back( newScript );
+	}
+
 	return result;
-	//return newScript.Run( filename );
 }
 
 void Runtime::Refer( int ref )
@@ -170,11 +200,17 @@ lua_State* Runtime::GetState() const
 	return m_pLua;
 }
 
+bool Runtime::GetRunning() const
+{
+	return m_bRunning;
+}
+
 void Runtime::lua_Register( lua_State* lua )
 {
 	lua_register( lua, "Run", lua_Run );
 	lua_register( lua, "Refer", lua_Refer );
 	lua_register( lua, "Unrefer", lua_Unrefer );
+	lua_register( lua, "Quit", lua_Quit );
 }
 
 int Runtime::lua_Run( lua_State* lua )
@@ -217,4 +253,10 @@ int Runtime::lua_Unrefer( lua_State* lua )
 	}
 
 	return result;
+}
+
+int Runtime::lua_Quit( lua_State* lua )
+{
+	Runtime::Instance().Quit();
+	return 0;
 }

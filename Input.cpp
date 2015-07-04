@@ -29,12 +29,12 @@ bool Input::Update()
 		else if( e.type == SDL_KEYDOWN )
 		{
 			if( !e.key.repeat )
-				AddKey( m_vecKeys, e.key.keysym.sym );
-			AddKey( m_vecRepeatKeys, e.key.keysym.sym );
+				AddKey( m_vecKeys, e.key.keysym.scancode );
+			AddKey( m_vecRepeatKeys, e.key.keysym.scancode );
 		}
 		else if( e.type == SDL_KEYUP )
 		{
-			RemoveKey( m_vecKeys, e.key.keysym.sym );
+			RemoveKey( m_vecKeys, e.key.keysym.scancode );
 		}
 		else if( e.type == SDL_MOUSEMOTION )
 		{
@@ -51,7 +51,7 @@ bool Input::Update()
 	return result;
 }
 
-int Input::FindKey( vector<SDL_Keycode>& vec, SDL_Keycode key )
+int Input::FindKey( vector<SDL_Scancode>& vec, SDL_Scancode key )
 {
 	int result = -1;
 	for( size_t i=0; i<vec.size() && result < 0; i++ )
@@ -60,38 +60,38 @@ int Input::FindKey( vector<SDL_Keycode>& vec, SDL_Keycode key )
 	return result;
 }
 
-void Input::AddKey( vector<SDL_Keycode>& vec, SDL_Keycode key )
+void Input::AddKey( vector<SDL_Scancode>& vec, SDL_Scancode key )
 {
 	int index = FindKey( vec, key );
 	if( index < 0 )
 		vec.push_back( key );
 }
 
-void Input::RemoveKey( vector<SDL_Keycode>& vec, SDL_Keycode key )
+void Input::RemoveKey( vector<SDL_Scancode>& vec, SDL_Scancode key )
 {
 	int index = FindKey( vec, key );
 	if( index >= 0 )
 		vec.erase( vec.begin()  + index );
 }
 
-bool Input::KeyDown( SDL_Keycode key )
+bool Input::KeyDown( SDL_Scancode key )
 {
 	return ( FindKey( m_vecKeys, key ) >= 0 );
 }
 
-bool Input::KeyUp( SDL_Keycode key )
+bool Input::KeyUp( SDL_Scancode key )
 {
 	return ( FindKey( m_vecKeys, key ) < 0 );
 }
 
-bool Input::KeyPressed( SDL_Keycode key )
+bool Input::KeyPressed( SDL_Scancode key )
 {
 	if( KeyUp( key ) )
 		return false;
 	return ( FindKey( m_vecPrevKeys, key ) < 0 );
 }
 
-bool Input::KeyReleased( SDL_Keycode key )
+bool Input::KeyReleased( SDL_Scancode key )
 {
 	if( KeyDown( key ) )
 		return false;
@@ -149,7 +149,7 @@ int Input::lua_KeyDown( lua_State* lua )
 
 	if( lua_gettop( lua ) >= 1 )
 	{
-		SDL_Keycode key = static_cast<SDL_Keycode>( lua_tonumber( lua, 1 ) );
+		SDL_Scancode key = static_cast<SDL_Scancode>( static_cast<int>( lua_tonumber( lua, 1 ) ) );
 		lua_pushboolean( lua, Input::Instance().KeyDown( key ) );
 		result = 1;
 	}
@@ -163,7 +163,7 @@ int Input::lua_KeyUp( lua_State* lua )
 
 	if( lua_gettop( lua ) >= 1 )
 	{
-		SDL_Keycode key = static_cast<SDL_Keycode>( lua_tonumber( lua, 1 ) );
+		SDL_Scancode key = static_cast<SDL_Scancode>( static_cast<int>( lua_tonumber( lua, 1 ) ) );
 		lua_pushboolean( lua, Input::Instance().KeyUp( key ) );
 		result = 1;
 	}
@@ -177,7 +177,7 @@ int Input::lua_KeyPressed( lua_State* lua )
 
 	if( lua_gettop( lua ) >= 1 )
 	{
-		SDL_Keycode key = static_cast<SDL_Keycode>( lua_tonumber( lua, 1 ) );
+		SDL_Scancode key = static_cast<SDL_Scancode>( static_cast<int>( lua_tonumber( lua, 1 ) ) );
 		lua_pushboolean( lua, Input::Instance().KeyPressed( key ) );
 		result = 1;
 	}
@@ -191,7 +191,7 @@ int Input::lua_KeyReleased( lua_State* lua )
 
 	if( lua_gettop( lua ) >= 1 )
 	{
-		SDL_Keycode key = static_cast<SDL_Keycode>( lua_tonumber( lua, 1 ) );
+		SDL_Scancode key = static_cast<SDL_Scancode>( static_cast<int>( lua_tonumber( lua, 1 ) ) );
 		lua_pushboolean( lua, Input::Instance().KeyReleased( key ) );
 		result = 1;
 	}

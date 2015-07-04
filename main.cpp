@@ -89,14 +89,12 @@ int main( int argc, char* argv[] )
 
 					const unsigned int targetTicks = 1000 / Config::Instance().GetFPS();
 
-					bool running = true;
-					while( running )
+					while( Runtime::Instance().GetRunning() )
 					{
 						unsigned int startTick = SDL_GetTicks();
 
-						running = Input::Instance().Update();
-						if( Input::Instance().KeyDown( SDLK_ESCAPE ) )
-							running = false;
+						if( !Input::Instance().Update() )
+							Runtime::Instance().Quit();
 
 						// Update
 						// TODO: Add command line argument for enabling/disabling
