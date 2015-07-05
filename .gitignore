@@ -17,6 +17,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# OpenOffice lock file
+.~lock.*
+
 # =========================
 # Operating System Files
 # =========================

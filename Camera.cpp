@@ -189,9 +189,15 @@ int Camera::lua_Position( lua_State* lua )
 		Camera* camera = lua_Read( lua, 1 );
 		if( camera )
 		{
-			if( nargs >= 4 ) // setting
+			if( nargs >= 4 ) // setting floats
 			{
-				camera->SetPosition( vec3( lua_tonumber( lua, 2 ), lua_tonumber( lua, 3 ), lua_tonumber( lua, 4 ) ) );
+				camera->SetPosition( vec3( static_cast<float>( lua_tonumber( lua, 2 ) ),
+											static_cast<float>( lua_tonumber( lua, 3 ) ),
+											static_cast<float>( lua_tonumber( lua, 4 ) ) ) );
+			}
+			else if( nargs >= 2 ) // setting vec3
+			{
+				camera->SetPosition( Vec3::lua_Read( lua, 2 ) );
 			}
 			else // getting
 			{

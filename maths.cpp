@@ -161,10 +161,15 @@ int rect::lua_Contains( lua_State* lua )
 {
     int result = 0;
     
-    if( lua_gettop( lua ) >= 2 )
+	int nargs = lua_gettop( lua );
+    if( nargs >= 2 )
     {
         rect r = lua_Read( lua, 1 );
-        vec2 v = Vec2::lua_Read( lua, 2 );
+        vec2 v;
+		if( nargs >= 3 )
+			v = Vec2::lua_Parse( lua, 2 );
+		else
+			v = Vec2::lua_Read( lua, 2 );
         lua_pushboolean( lua, r.Contains( v ) );
         result = 1;
     }

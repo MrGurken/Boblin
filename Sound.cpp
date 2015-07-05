@@ -53,6 +53,7 @@ void Sound::lua_Register( lua_State* lua )
 {
     luaL_Reg funcs[] =
     {
+		{ "Load", lua_Load },
         { "Play", lua_Play },
         { "Pause", lua_Pause },
         { "Stop", lua_Stop },
@@ -64,8 +65,6 @@ void Sound::lua_Register( lua_State* lua )
     lua_pushvalue( lua, -1 );
     lua_setfield( lua, -2, "__index" );
     lua_setglobal( lua, "Sound" );
-    
-    lua_register( lua, "LoadSound", lua_Load );
     
     Music::lua_Register( lua );
 }

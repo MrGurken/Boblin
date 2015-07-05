@@ -67,8 +67,8 @@ void Texture::lua_Register( lua_State* lua )
 	// TODO: Figure out if all this is really worth it for just one method
 	luaL_Reg funcs[] =
 	{
-		{ "Dimensions", lua_Dimensions },
 		{ "Load", lua_Load },
+		{ "Dimensions", lua_Dimensions },
 		{ NULL, NULL }
 	};
 
@@ -128,9 +128,9 @@ int Texture::lua_Dimensions( lua_State* lua )
 		Texture* ptr = lua_Read( lua, 1 );
 		if( ptr )
 		{
-			lua_pushnumber( lua, ptr->GetWidth() );
-			lua_pushnumber( lua, ptr->GetHeight() );
-			result = 2;
+			//lua_pushnumber( lua, ptr->GetWidth() );
+			//lua_pushnumber( lua, ptr->GetHeight() );
+			result = Vec2::lua_Write( lua, vec2( ptr->GetWidth(), ptr->GetHeight() ) );
 		}
 	}
 

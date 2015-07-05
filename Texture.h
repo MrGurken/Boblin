@@ -4,6 +4,7 @@
 #include "LibIncluder.h"
 #include "lua.hpp"
 #include "Assets.h"
+#include "maths.h"
 
 class Texture : public Asset
 {

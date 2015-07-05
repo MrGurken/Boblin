@@ -20,6 +20,7 @@ public:
 
 	void			Update();
 
+	// TODO: Match this with GLMs declaration
 	void			SetProjection( float aspectRatio, float fov, float nearplane, float farplane );
 	void			SetProjection( float left, float right, float top, float bottom, float nearplane, float farplane );
 	void			SetProjection( const mat4& projection );
