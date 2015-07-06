@@ -65,7 +65,9 @@ int main( int argc, char* argv[] )
 						"uniform mat4 ModelMatrix;"
 						"uniform mat4 ViewMatrix;"
 						"uniform mat4 ProjectionMatrix;"
-						"void main() { gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4( PositionIn, 1.0 ); UV0 = UVIn; }";
+						"uniform vec2 UVMin;"
+						"uniform vec2 UVLength;"
+						"void main() { gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4( PositionIn, 1.0 ); UV0 = UVMin + ( UVIn * UVLength ); }";
 
 					const char* fsource = "#version 330\n"
 						"in vec2 UV0;"
@@ -81,6 +83,8 @@ int main( int argc, char* argv[] )
 					shader.AddUniform( "ModelMatrix" );
 					shader.AddUniform( "ViewMatrix" );
 					shader.AddUniform( "ProjectionMatrix" );
+					shader.AddUniform( "UVMin" );
+					shader.AddUniform( "UVLength" );
 
 					string mainScript = Config::Instance().GetScriptFolder() + "/main.lua";
 					Runtime::Instance().Run( mainScript );

@@ -12,6 +12,7 @@ using std::vector;
 #include "FileInfo.h"
 #include "Camera.h"
 #include "Input.h"
+#include "Config.h"
 
 class Script
 {

@@ -82,6 +82,7 @@ Runtime::Runtime()
 	Camera::lua_Register( m_pLua );
 	Maths::lua_Register( m_pLua );
 	Input::lua_Register( m_pLua );
+	Config::lua_Register( m_pLua );
 }
 
 Runtime::~Runtime()

@@ -36,15 +36,22 @@ public:
 	void SetFriction( vec2 friction );
 	void SetColor( vec4 color );
 	void SetTexture( Texture* texture );
+	void SetCrop( rect crop );
+	void SetUVMin( vec2 uv );
+	void SetUVLength( vec2 uv );
 	void SetAlive( bool alive );
 
 	rect GetCollisionBounds() const;
 	rect GetRenderBounds() const;
+	rect GetWorldBounds() const;
 	vec2 GetPosition() const;
 	vec2 GetVelocity() const;
 	vec2 GetFriction() const;
 	vec4 GetColor() const;
 	Texture* GetTexture() const;
+	rect GetCrop() const;
+	vec2 GetUVMin() const;
+	vec2 GetUVLength() const;
 	bool GetAlive() const;
 
 	static void lua_Register( lua_State* lua );
@@ -54,11 +61,15 @@ public:
 	LDEC( Destroy );
 	LDEC( CollisionBounds );
 	LDEC( RenderBounds );
+	LDEC( WorldBounds );
 	LDEC( Position );
 	LDEC( Velocity );
 	LDEC( Friction );
 	LDEC( Color );
 	LDEC( Texture );
+	LDEC( Crop );
+	LDEC( UVMin );
+	LDEC( UVLength );
 	LDEC( Alive );
 	LDEC( Collides );
 
@@ -70,6 +81,8 @@ private:
 	vec2 m_friction;
 	vec4 m_color;
 	Texture* m_pTexture;
+	vec2 m_uvMin;
+	vec2 m_uvLength;
 	bool m_bAlive;
 
 	static vector<GameObject*> s_vecObjects;

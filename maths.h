@@ -68,6 +68,7 @@ namespace Vec2
     int lua_Write( lua_State* lua, const vec2& value );
     int lua_Length( lua_State* lua );
 	int lua_Normalize( lua_State* lua );
+	int lua_Crop( lua_State* lua );
 
 	float Length( const vec2& v );
 }
@@ -80,6 +81,7 @@ namespace Vec3
     int lua_Write( lua_State* lua, const vec3& value );
     int lua_Length( lua_State* lua );
 	int lua_Normalize( lua_State* lua );
+	int lua_Crop( lua_State* lua );
 
 	float Length( const vec3& v );
 }
@@ -92,6 +94,7 @@ namespace Vec4
 	int lua_Write( lua_State* lua, const vec4& value );
 	int lua_Length( lua_State* lua );
 	int lua_Normalize( lua_State* lua );
+	int lua_Crop( lua_State* lua );
 
 	float Length( const vec4& v );
 }

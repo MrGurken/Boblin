@@ -23,6 +23,8 @@ public:
 	const string&	GetTitle() const;
 	const string&	GetScriptFolder() const;
 
+	static void		lua_Register( lua_State* lua );
+
 private:
 	Config(){}
 	Config( const Config& ref ){}

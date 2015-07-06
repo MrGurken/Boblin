@@ -126,6 +126,8 @@ int rect::lua_Write( lua_State* lua, const rect& value )
     lua_setfield( lua, -2, "w" );
     lua_pushnumber( lua, value.h );
     lua_setfield( lua, -2, "h" );
+	luaL_getmetatable( lua, "Rect" );
+	lua_setmetatable( lua, -2 );
     return 1;
 }
 
@@ -187,6 +189,7 @@ void Vec2::lua_Register( lua_State* lua )
     {
         { "Length", lua_Length },
 		{ "Normalize", lua_Normalize },
+		{ "Crop", lua_Crop },
         { NULL, NULL }
     };
     
@@ -245,6 +248,47 @@ int Vec2::lua_Normalize( lua_State* lua )
 		vec2 v = lua_Read( lua, 1 );
 		v /= Length( v );
 		result = lua_Write( lua, v );
+	}
+
+	return result;
+}
+
+int Vec2::lua_Crop( lua_State* lua )
+{
+	int result = 0;
+
+	int nargs = lua_gettop( lua );
+	if( nargs >= 1 )
+	{
+		vec2 v = lua_Read( lua, 1 );
+		
+		if( nargs >= 3 ) // crop componentwise
+		{
+			vec2 c = lua_Parse( lua, 2 );
+
+			if( v.x > c.x ) v.x = c.x;
+			else if( v.x < -c.x ) v.x = -c.x;
+
+			if( v.y > c.y ) v.y = c.y;
+			else if( v.y < -c.y ) v.y = -c.y;
+
+			result = lua_Write( lua, v );
+		}
+		else if( nargs >= 2 ) // crop based on length
+		{
+			float len = Length( v );
+
+			float croplen = static_cast<float>( lua_tonumber( lua, 2 ) );
+
+			if( len > croplen )
+			{
+				v /= len;
+				v *= croplen;
+			}
+
+			// TODO: Instead of returning a new vector, just write to the vector on the stack
+			result = lua_Write( lua, v );
+		}
 	}
 
 	return result;
@@ -328,6 +372,48 @@ int Vec3::lua_Normalize( lua_State* lua )
 		vec3 v = lua_Read( lua, 1 );
 		v /= Length( v );
 		result = lua_Write( lua, v );
+	}
+
+	return result;
+}
+
+int Vec3::lua_Crop( lua_State* lua )
+{
+	int result = 0;
+
+	int nargs = lua_gettop( lua );
+	if( nargs >= 1 )
+	{
+		vec3 v = lua_Read( lua, 1 );
+		
+		if( nargs >= 4 )
+		{
+			vec3 c = lua_Parse( lua, 2 );
+
+			if( v.x > c.x ) v.x = c.x;
+			else if( v.x < -c.x ) v.x = -c.x;
+
+			if( v.y > c.y ) v.y = c.y;
+			else if( v.y < -c.y ) v.y = -c.y;
+
+			if( v.z > c.z ) v.z = c.z;
+			else if( v.z < -c.z ) v.z = -c.z;
+
+			result = lua_Write( lua, v );
+		}
+		else if( nargs >= 2 )
+		{
+			float len = Length( v );
+			float croplen = static_cast<float>( lua_tonumber( lua, 2 ) );
+
+			if( len > croplen )
+			{
+				v /= len;
+				v *= croplen;
+			}
+
+			result = lua_Write( lua, v );
+		}
 	}
 
 	return result;
@@ -419,6 +505,51 @@ int Vec4::lua_Normalize( lua_State* lua )
 		vec4 v = lua_Read( lua, 1 );
 		v /= v.length();
 		result = lua_Write( lua, v );
+	}
+
+	return result;
+}
+
+int Vec4::lua_Crop( lua_State* lua )
+{
+	int result = 0;
+
+	int nargs = lua_gettop( lua );
+	if( nargs >= 1 )
+	{
+		vec4 v = lua_Read( lua, 1 );
+
+		if( nargs >= 5 )
+		{
+			vec4 c = lua_Parse( lua, 2 );
+
+			if( v.x > c.x ) v.x = c.x;
+			else if( v.x < -c.x ) v.x = -c.x;
+
+			if( v.y > c.y ) v.y = c.y;
+			else if( v.y < -c.y ) v.y = -c.y;
+
+			if( v.z > c.z ) v.z = c.z;
+			else if( v.z < -c.z ) v.z = -c.z;
+
+			if( v.w > c.w ) v.w = c.w;
+			else if( v.w < -c.w ) v.w = -c.w;
+
+			result = lua_Write( lua, v );
+		}
+		else if( nargs >= 2 )
+		{
+			float len = Length( v );
+			float croplen = static_cast<float>( lua_tonumber( lua, 2 ) );
+
+			if( len > croplen )
+			{
+				v /= len;
+				v *= croplen;
+			}
+
+			result = lua_Write( lua, v );
+		}
 	}
 
 	return result;
