@@ -25,12 +25,14 @@ public:
 	bool			Run( const string& filename );
 
 	const string&	GetFilename() const;
-	const FileInfo&	GetFileInfo() const;
+	//const FileInfo&	GetFileInfo() const;
+	uint64_t		GetFileTime() const;
 
 private:
 	bool			m_bValid;
 	string			m_strFilename;
-	FileInfo		m_fileInfo;
+	//FileInfo		m_fileInfo;
+	uint64_t		m_uFileTime;
 	lua_State*		m_pLua;
 };
 
@@ -43,6 +45,7 @@ struct FuncRef
 };
 
 #define RUNTIME_MAX_REFS 32
+#define RUNTIME_MAX_SCRIPTS 64
 
 class Runtime
 {
@@ -82,7 +85,7 @@ private:
 	int				FindRef( int ref );
 
 	lua_State*		m_pLua;
-	vector<Script>	m_vecScripts;
+	Script*			m_pScripts[RUNTIME_MAX_SCRIPTS];
 	FuncRef			m_refs[RUNTIME_MAX_REFS];
 	bool			m_bRunning;
 };

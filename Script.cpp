@@ -7,7 +7,7 @@ Script::Script( lua_State* lua )
 
 Script::Script( const Script& ref )
 	: m_pLua( ref.m_pLua ), m_bValid( ref.m_bValid ),
-	m_strFilename( ref.m_strFilename ),	m_fileInfo( ref.m_fileInfo )
+	m_strFilename( ref.m_strFilename ),	m_uFileTime( ref.m_uFileTime )
 {
 }
 
@@ -21,16 +21,9 @@ bool Script::Hotload()
 
 	if( m_bValid )
 	{
-		FileInfo curInfo( m_strFilename );
+		uint64_t curtime = FileInfo::GetLastModified( m_strFilename );
 
-		if( m_strFilename.compare( "./res/scripts/player.lua"  ) == 0 )
-		{
-			//printf( "%u\n", m_fileInfo.GetModifiedTime() );
-			//printf( "%u.\n", curInfo.GetModifiedTime() );
-		}
-			//printf( "%u : %u\n", curInfo.GetModifiedTime(), m_fileInfo.GetModifiedTime() );
-
-		if( curInfo != m_fileInfo )
+		if( curtime != m_uFileTime )
 		{
 			printf( "Script.cpp: Hotloading = %s\n", m_strFilename.c_str() );
 			Run( m_strFilename );
@@ -59,14 +52,14 @@ bool Script::Run( const string& filename )
 		m_bValid = true;
 	}
 
-	m_fileInfo.Get( filename );
-	printf("%u\n", m_fileInfo.GetModifiedTime());
+	m_uFileTime = FileInfo::GetLastModified( filename );
+	printf( "%s : %u\n", filename.c_str(), m_uFileTime );
 
 	return result;
 }
 
 const string& Script::GetFilename() const { return m_strFilename; }
-const FileInfo& Script::GetFileInfo() const { return m_fileInfo; }
+uint64_t Script::GetFileTime() const { return m_uFileTime; }
 
 // *******************************************************************
 // Runtime
@@ -92,10 +85,16 @@ Runtime::Runtime()
 	Maths::lua_Register( m_pLua );
 	Input::lua_Register( m_pLua );
 	Config::lua_Register( m_pLua );
+
+	for( int i=0; i<RUNTIME_MAX_SCRIPTS; i++ )
+		m_pScripts[i] = nullptr;
 }
 
 Runtime::~Runtime()
 {
+	for( int i=0; i<RUNTIME_MAX_SCRIPTS; i++ )
+		delete m_pScripts[i];
+
 	lua_close( m_pLua );
 }
 
@@ -113,8 +112,9 @@ bool Runtime::Hotload()
 {
 	bool result = false;
 
-	for( script_it it = m_vecScripts.begin(); it != m_vecScripts.end(); it++ )
-		result = result || it->Hotload();
+	for( int i=0; i<RUNTIME_MAX_SCRIPTS; i++ )
+		if( m_pScripts[i] )
+			result = result || m_pScripts[i]->Hotload();
 
 	return result;
 }
@@ -124,22 +124,15 @@ bool Runtime::Run( const string& filename )
 	bool result = false;
 	bool found = false;
 
-	for( script_it it = m_vecScripts.begin(); it != m_vecScripts.end() && !found; it++ )
+	for( int i=0; i<RUNTIME_MAX_SCRIPTS; i++ )
 	{
-		// Have we already run the requested script?
-		if( filename.compare( it->GetFilename() ) )
+		if( m_pScripts[i] && m_pScripts[i]->GetFilename().compare( filename ) == 0 )
 		{
-			FileInfo curinfo;
-			curinfo.Get( filename );
+			uint64_t curtime = FileInfo::GetLastModified( filename );
 
-			// Has it been modified since we last ran it?
-			printf( "Found script %s\n", filename.c_str() );
-			if( curinfo != it->GetFileInfo() )
+			if( curtime != m_pScripts[i]->GetFileTime() )
 			{
-				printf( "Cur: %u\n", curinfo.GetModifiedTime() );
-				printf( "Prev: %u\n", it->GetFileInfo().GetModifiedTime() );
-				result = it->Run( filename );
-				printf("Rerunning!\n");
+				result = m_pScripts[i]->Run( filename );
 			}
 
 			found = true;
@@ -148,9 +141,16 @@ bool Runtime::Run( const string& filename )
 
 	if( !found )
 	{
-		Script newScript( m_pLua );
-		result = newScript.Run( filename );
-		m_vecScripts.push_back( newScript );
+		int index = -1;
+		for( int i=0; i<RUNTIME_MAX_SCRIPTS && index < 0; i++ )
+			if( !m_pScripts[i] )
+				index = i;
+
+		if( index >= 0 )
+		{
+			m_pScripts[index] = new Script( m_pLua );
+			m_pScripts[index]->Run( filename );
+		}
 	}
 
 	return result;

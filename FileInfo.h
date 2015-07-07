@@ -14,24 +14,9 @@
 #include <string>
 using std::string;
 
-class FileInfo
+namespace FileInfo
 {
-public:
-	FileInfo();
-	FileInfo( const string& filename );
-	FileInfo( const FileInfo& ref );
-	virtual ~FileInfo();
-
-	FileInfo&	operator=( const FileInfo& ref );
-	bool		operator==( const FileInfo& ref );
-	bool		operator!=( const FileInfo& ref );
-
-	void		Get( const string& filename );
-
-	uint64_t	GetModifiedTime() const;
-
-private:
-	uint64_t	m_modifiedTime;
+	uint64_t	GetLastModified( const string& filename );
 };
 
 #endif
