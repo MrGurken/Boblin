@@ -16,7 +16,6 @@ using std::string;
 #define MODE_ALL 2
 
 // NOTE: A directory is considered a file
-// TODO: Do we really need to wrap this into a namespace
 namespace File
 {
 	void lua_Register( lua_State* lua );

@@ -286,7 +286,6 @@ int Vec2::lua_Crop( lua_State* lua )
 				v *= croplen;
 			}
 
-			// TODO: Instead of returning a new vector, just write to the vector on the stack
 			result = lua_Write( lua, v );
 		}
 	}

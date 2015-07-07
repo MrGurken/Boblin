@@ -51,25 +51,13 @@ int File::lua_Get( lua_State* lua, int mode )
 			do
 			{
 				const char* path = findData.cFileName;
-				bool directory = ( ( findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) != 0 );
+				int directory = ( ( ( findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) != 0 ) ? 1 : 0 );
 
-				// TODO: We can probably collapse this
-				if( directory )
+				if( mode == MODE_ALL || ( mode == directory ) )
 				{
-					if( mode == MODE_ALL || mode == MODE_DIRECTORIES )
+					if( !directory || ( strcmp( ".", path ) != 0 && strcmp( "..", path ) != 0 ) )
 					{
-						if( strcmp( ".", path ) != 0 && strcmp( "..", path ) != 0 )
-						{
-							lua_Write( lua, path, directory );
-							lua_rawseti( lua, -2, curFile++ );
-						}
-					}
-				}
-				else
-				{
-					if( mode == MODE_ALL || mode == MODE_FILES )
-					{
-						lua_Write( lua, path, directory );
+						lua_Write( lua, path, ( directory == 1 ) );
 						lua_rawseti( lua, -2, curFile++ );
 					}
 				}
@@ -88,24 +76,13 @@ int File::lua_Get( lua_State* lua, int mode )
 			while( ( ent = readdir( dir ) ) )
 			{
 				const char* path = ent->d_name;
-				bool directory = ( ( ent->d_type & DT_DIR ) != 0 );
+				int directory = ( ( ( ent->d_type & DT_DIR ) != 0 ) ? 1 : 0 );
 
-				if( directory )
+				if( mode == MODE_ALL || ( mode == directory ) )
 				{
-					if( mode == MODE_ALL || mode == MODE_DIRECTORIES )
+					if( !directory || ( strcmp( ".", path ) != 0 && strcmp( "..", path ) != 0 ) )
 					{
-						if( strcmp( ".", path ) != 0 && strcmp( "..", path ) != 0 )
-						{
-							lua_Write( lua, path, directory );
-							lua_rawseti( lua, -2, curFile++ );
-						}
-					}
-				}
-				else
-				{
-					if( mode == MODE_ALL || mode == MODE_FILES )
-					{
-						lua_Write( lua, path, directory );
+						lua_Write( lua, path, ( directory == 1 ) );
 						lua_rawseti( lua, -2, curFile++ );
 					}
 				}

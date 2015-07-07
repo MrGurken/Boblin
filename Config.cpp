@@ -18,6 +18,7 @@ bool Config::Load( const string& filename )
 		stream >> m_iWidth;
 		stream >> m_iHeight;
 		stream >> m_iFPS;
+		stream >> m_bDebugMode;
 		stream.ignore();
 
 		getline( stream, m_strTitle );
@@ -35,6 +36,7 @@ int Config::GetStartX() const { return m_iStartX; }
 int Config::GetStartY() const { return m_iStartY; }
 int Config::GetWidth() const { return m_iWidth; }
 int Config::GetHeight() const { return m_iHeight; }
+bool Config::GetDebugMode() const { return m_bDebugMode; }
 const string& Config::GetTitle() const { return m_strTitle; }
 const string& Config::GetScriptFolder() const { return m_strScriptFolder; }
 
@@ -51,6 +53,8 @@ void Config::lua_Register( lua_State* lua )
 	lua_setfield( lua, -2, "Height" );
 	lua_pushnumber( lua, Config::Instance().m_iFPS );
 	lua_setfield( lua, -2, "FPS" );
+	lua_pushboolean( lua, Config::Instance().m_bDebugMode );
+	lua_setfield( lua, -2, "DebugMode" );
 	lua_pushstring( lua, Config::Instance().m_strTitle.c_str() );
 	lua_setfield( lua, -2, "Title" );
 	lua_pushstring( lua, Config::Instance().m_strScriptFolder.c_str() );

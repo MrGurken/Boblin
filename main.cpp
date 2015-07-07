@@ -55,9 +55,6 @@ int main( int argc, char* argv[] )
 				else
 #endif
 				{
-					// TODO: Remove this
-					glDisable( GL_CULL_FACE );
-
 					const char* vsource = "#version 330\n"
 						"layout (location=0) in vec3 PositionIn;"
 						"layout (location=1) in vec2 UVIn;"
@@ -101,9 +98,8 @@ int main( int argc, char* argv[] )
 							Runtime::Instance().Quit();
 
 						// Update
-						// TODO: Add command line argument for enabling/disabling
-						// things like hotloading
-						Runtime::Instance().Hotload();
+						if( Config::Instance().GetDebugMode() )
+							Runtime::Instance().Hotload();
 						Runtime::Instance().Update();
 
 						GameObject::UpdateAll();

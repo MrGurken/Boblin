@@ -6,9 +6,9 @@ Camera::Camera()
 {
 }
 
-Camera::Camera( float aspectRatio, float fov, float nearplane, float farplane )
+Camera::Camera( float fov, float aspectRatio, float nearplane, float farplane )
 {
-	SetProjection( aspectRatio, fov, nearplane, farplane );
+	SetProjection( fov, aspectRatio, nearplane, farplane );
 }
 
 Camera::Camera( float left, float right, float top, float bottom, float nearplane, float farplane )
@@ -35,7 +35,7 @@ void Camera::Center( vec2 position )
 	m_position.y = position.y - Config::Instance().GetHeight() * 0.5f;
 }
 
-void Camera::SetProjection( float aspectRatio, float fov, float nearplane, float farplane )
+void Camera::SetProjection( float fov, float aspectRatio, float nearplane, float farplane )
 {
 	m_projection = perspective( fov, aspectRatio, nearplane, farplane );
 }
@@ -264,10 +264,6 @@ int Camera::lua_Rotation( lua_State* lua )
 			else // getting
 			{
 				quat rot = camera->GetRotation();
-				/*lua_pushnumber( lua, rot.x );
-				lua_pushnumber( lua, rot.y );
-				lua_pushnumber( lua, rot.z );
-				lua_pushnumber( lua, rot.w );*/
 				result = Quat::lua_Write( lua, rot );
 			}
 		}

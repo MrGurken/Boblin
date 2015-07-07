@@ -20,6 +20,7 @@ public:
 	int				GetWidth() const;
 	int				GetHeight() const;
 	int				GetFPS() const;
+	bool			GetDebugMode() const;
 	const string&	GetTitle() const;
 	const string&	GetScriptFolder() const;
 
@@ -35,6 +36,7 @@ private:
 	int				m_iWidth;
 	int				m_iHeight;
 	int				m_iFPS;
+	bool			m_bDebugMode;
 	string			m_strTitle;
 	string			m_strScriptFolder;
 };

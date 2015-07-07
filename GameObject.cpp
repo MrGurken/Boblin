@@ -59,7 +59,6 @@ void GameObject::Render( Shader* shader )
 	shader->SetUniform( "UVMin", m_uvMin );
 	shader->SetUniform( "UVLength", m_uvLength );
 
-	// TODO: Figure out how to draw different kinds of meshes
 	quad->Render();
 }
 
@@ -229,19 +228,13 @@ LIMP( CollisionBounds )
 	int result = 0;
 
 	int nargs = lua_gettop( lua );
-	if( nargs >= 1 ) // need atleast the game object itself to either set or get
+	if( nargs >= 1 )
 	{
 		GameObject* ptr = lua_Read( lua, 1 );
 		if( ptr )
 		{
 			if( nargs >= 5 ) // setting floats
 			{
-				/*float x = static_cast<float>( lua_tonumber( lua, 2 ) );
-				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
-				float w = static_cast<float>( lua_tonumber( lua, 4 ) );
-				float h = static_cast<float>( lua_tonumber( lua, 5 ) );
-
-				ptr->SetCollisionBounds( rect( x, y, w, h ) );*/
 				ptr->SetCollisionBounds( rect::lua_Parse( lua, 2 ) );
 			}
 			else if( nargs >= 2 ) // setting
@@ -251,11 +244,6 @@ LIMP( CollisionBounds )
 			else // getting
 			{
 				rect r = ptr->GetCollisionBounds();
-				/*lua_pushnumber( lua, r.x );
-				lua_pushnumber( lua, r.y );
-				lua_pushnumber( lua, r.w );
-				lua_pushnumber( lua, r.h );
-				result = 4;*/
 				result = rect::lua_Write( lua, r );
 			}
 		}
@@ -276,12 +264,6 @@ LIMP( RenderBounds )
 		{
 			if( nargs >= 5 ) // setting
 			{
-				/*float x = static_cast<float>( lua_tonumber( lua, 2 ) );
-				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
-				float w = static_cast<float>( lua_tonumber( lua, 4 ) );
-				float h = static_cast<float>( lua_tonumber( lua, 5 ) );
-
-				ptr->SetRenderBounds( rect( x, y, w, h ) );*/
 				ptr->SetRenderBounds( rect::lua_Parse( lua, 2 ) );
 			}
 			else if( nargs >= 2 ) // setting 
@@ -291,11 +273,6 @@ LIMP( RenderBounds )
 			else // getting
 			{
 				rect r = ptr->GetRenderBounds();
-				/*lua_pushnumber( lua, r.x );
-				lua_pushnumber( lua, r.y );
-				lua_pushnumber( lua, r.w );
-				lua_pushnumber( lua, r.h );
-				result = 4;*/
 				result = rect::lua_Write( lua, r );
 			}
 		}
@@ -332,10 +309,6 @@ LIMP( Position )
 		{
 			if( nargs >= 3 ) // setting
 			{
-				/*float x = static_cast<float>( lua_tonumber( lua, 2 ) );
-				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
-
-				ptr->SetPosition( vec2( x, y ) );*/
 				ptr->SetPosition( Vec2::lua_Parse( lua, 2 ) );
 			}
 			else if( nargs >= 2 ) // setting
@@ -345,9 +318,6 @@ LIMP( Position )
 			else // getting
 			{
 				vec2 v = ptr->GetPosition();
-				/*lua_pushnumber( lua, v.x );
-				lua_pushnumber( lua, v.y );
-				result = 2;*/
 				result = Vec2::lua_Write( lua, v );
 			}
 		}
@@ -368,10 +338,6 @@ LIMP( Velocity )
 		{
 			if( nargs >= 3 ) // setting
 			{
-				/*float x = static_cast<float>( lua_tonumber( lua, 2 ) );
-				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
-
-				ptr->SetVelocity( vec2( x, y ) );*/
 				ptr->SetVelocity( Vec2::lua_Parse( lua, 2 ) );
 			}
 			else if( nargs >= 2 ) // setting
@@ -381,9 +347,6 @@ LIMP( Velocity )
 			else // getting
 			{
 				vec2 v = ptr->GetVelocity();
-				/*lua_pushnumber( lua, v.x );
-				lua_pushnumber( lua, v.y );
-				result = 2;*/
 				result = Vec2::lua_Write( lua, v );
 			}
 		}
@@ -404,10 +367,6 @@ LIMP( Friction )
 		{
 			if( nargs >= 3 ) // setting
 			{
-				/*float x = static_cast<float>( lua_tonumber( lua, 2 ) );
-				float y = static_cast<float>( lua_tonumber( lua, 3 ) );
-
-				ptr->SetFriction( vec2( x, y ) );*/
 				ptr->SetFriction( Vec2::lua_Parse( lua, 2 ) );
 			}
 			else if( nargs >= 2 ) // setting
@@ -417,9 +376,6 @@ LIMP( Friction )
 			else // getting
 			{
 				vec2 v = ptr->GetFriction();
-				/*lua_pushnumber( lua, v.x );
-				lua_pushnumber( lua, v.y );
-				result = 2;*/
 				result = Vec2::lua_Write( lua, v );
 			}
 		}
@@ -440,12 +396,6 @@ LIMP( Color )
 		{
 			if( nargs >= 5 ) // setting
 			{
-				/*float r = static_cast<float>( lua_tonumber( lua, 2 ) );
-				float g = static_cast<float>( lua_tonumber( lua, 3 ) );
-				float b = static_cast<float>( lua_tonumber( lua, 4 ) );
-				float a = static_cast<float>( lua_tonumber( lua, 5 ) );
-
-				ptr->SetColor( vec4( r, g, b, a ) );*/
 				ptr->SetColor( Vec4::lua_Parse( lua, 2 ) );
 			}
 			else if( nargs >= 2 ) // setting
@@ -455,11 +405,6 @@ LIMP( Color )
 			else // getting
 			{
 				vec4 v = ptr->GetColor();
-				/*lua_pushnumber( lua, v.r );
-				lua_pushnumber( lua, v.g );
-				lua_pushnumber( lua, v.b );
-				lua_pushnumber( lua, v.a );
-				result = 4;*/
 				result = Vec4::lua_Write( lua, v );
 			}
 		}

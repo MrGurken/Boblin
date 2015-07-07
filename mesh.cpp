@@ -33,15 +33,9 @@ void Mesh::AddVertices( Vertex* vertices, int nv, GLuint* indices, int ni )
 
 	glEnableVertexAttribArray( 0 ); // position
 	glEnableVertexAttribArray( 1 ); // texture coordinates
-	//glEnableVertexAttribArray( 2 ); // normal
-	//glEnableVertexAttribArray( 3 ); // tangent
-	//glEnableVertexAttribArray( 4 ); // bitangent
 
 	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0 );
 	glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat)*3) );
-	//glVertexAttribPointer( 2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat)*5) );
-	//glVertexAttribPointer( 3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat)*8) );
-	//glVertexAttribPointer( 4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(GLfloat)*11) );
 
 	glBindBuffer( GL_ARRAY_BUFFER, 0 );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );

@@ -23,7 +23,7 @@ bool Texture::Load( const string& filename )
 	{
 		glGenTextures( 1, &m_glID );
 		glBindTexture( GL_TEXTURE_2D, m_glID );
-		// TODO: Find a way to supply min and mag filter to this function
+
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
@@ -64,7 +64,6 @@ int Texture::GetHeight() const { return m_iHeight; }
 
 void Texture::lua_Register( lua_State* lua )
 {
-	// TODO: Figure out if all this is really worth it for just one method
 	luaL_Reg funcs[] =
 	{
 		{ "Load", lua_Load },
@@ -128,8 +127,6 @@ int Texture::lua_Dimensions( lua_State* lua )
 		Texture* ptr = lua_Read( lua, 1 );
 		if( ptr )
 		{
-			//lua_pushnumber( lua, ptr->GetWidth() );
-			//lua_pushnumber( lua, ptr->GetHeight() );
 			result = Vec2::lua_Write( lua, vec2( ptr->GetWidth(), ptr->GetHeight() ) );
 		}
 	}

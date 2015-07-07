@@ -15,7 +15,7 @@ class Camera
 {
 public:
 	Camera();
-	Camera( float aspectRatio, float fov, float nearplane, float farplane );
+	Camera( float fov, float aspectRatio, float nearplane, float farplane );
 	Camera( float left, float right, float top, float bottom, float nearplane, float farplane );
 	Camera( const Camera& ref );
 	virtual ~Camera();
@@ -23,8 +23,7 @@ public:
 	void			Update();
 	void			Center( vec2 position );
 
-	// TODO: Match this with GLMs declaration
-	void			SetProjection( float aspectRatio, float fov, float nearplane, float farplane );
+	void			SetProjection( float fov, float aspectRatio, float nearplane, float farplane );
 	void			SetProjection( float left, float right, float top, float bottom, float nearplane, float farplane );
 	void			SetProjection( const mat4& projection );
 	void			SetPosition( vec3 position );
