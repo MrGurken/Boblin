@@ -63,13 +63,15 @@ bool GameObject::Collides( const GameObject& ref )
 void GameObject::UpdateAll()
 {
 	for( vector<GameObject*>::iterator it = s_vecObjects.begin(); it != s_vecObjects.end(); it++ )
-		(*it)->Update();
+        if( (*it)->GetAlive() )
+            (*it)->Update();
 }
 
 void GameObject::RenderAll( Shader* shader )
 {
 	for( vector<GameObject*>::iterator it = s_vecObjects.begin(); it != s_vecObjects.end(); it++ )
-		(*it)->Render( shader );
+        if( (*it)->GetAlive() )
+            (*it)->Render( shader );
 }
 
 void GameObject::SetCollisionBounds( rect bounds ) { m_collisionBounds = bounds; }
