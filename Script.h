@@ -57,6 +57,7 @@ public:
 	bool			Run( const string& filename );
 	void			Refer( int ref );
 	void			Unrefer( int ref );
+	int				Seconds( int sec );
 
 	void			Update();
 
@@ -67,6 +68,7 @@ public:
 	static int		lua_Run( lua_State* lua );
 	static int		lua_Refer( lua_State* lua );
 	static int		lua_Unrefer( lua_State* lua );
+	static int		lua_Seconds( lua_State* lua );
 	static int		lua_Quit( lua_State* lua );
 
 private:

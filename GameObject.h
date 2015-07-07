@@ -19,6 +19,7 @@ class GameObject
 {
 public:
 	GameObject();
+	GameObject( const GameObject& ref );
 	~GameObject();
 
 	void Update();
@@ -58,6 +59,7 @@ public:
 	static GameObject* lua_Read(lua_State* lua, int index);
 	static int lua_Write(lua_State* lua, GameObject* object);
 	LDEC( Create );
+	LDEC( Copy );
 	LDEC( Destroy );
 	LDEC( CollisionBounds );
 	LDEC( RenderBounds );

@@ -29,6 +29,12 @@ void Camera::Update()
 {
 }
 
+void Camera::Center( vec2 position )
+{
+	m_position.x = position.x - Config::Instance().GetWidth() * 0.5f;
+	m_position.y = position.y - Config::Instance().GetHeight() * 0.5f;
+}
+
 void Camera::SetProjection( float aspectRatio, float fov, float nearplane, float farplane )
 {
 	m_projection = perspective( fov, aspectRatio, nearplane, farplane );
@@ -97,6 +103,7 @@ void Camera::lua_Register( lua_State* lua )
 		{ "Create", lua_Create },
 		{ "Projection", lua_Projection },
 		{ "Position", lua_Position },
+		{ "Center", lua_Center },
 		{ "Rotation", lua_Rotation },
 		{ "Active", lua_Active },
 		{ NULL, NULL }
@@ -202,6 +209,30 @@ int Camera::lua_Position( lua_State* lua )
 			else // getting
 			{
 				result = Vec3::lua_Write( lua, camera->GetPosition() );
+			}
+		}
+	}
+
+	return result;
+}
+
+int Camera::lua_Center( lua_State* lua )
+{
+	int result = 0;
+
+	int nargs = lua_gettop( lua );
+	if( nargs >= 1 )
+	{
+		Camera* camera = lua_Read( lua, 1 );
+		if( camera )
+		{
+			if( nargs >= 3 ) // setting floats
+			{
+				camera->Center( Vec2::lua_Parse( lua, 2 ) );
+			}
+			else if( nargs >= 2 ) // setting vec2
+			{
+				camera->Center( Vec2::lua_Read( lua, 2 ) );
 			}
 		}
 	}

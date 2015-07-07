@@ -1,6 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "Config.h"
+
 #include "maths.h"
 #include "lua.hpp"
 #include "glm.hpp"
@@ -19,6 +21,7 @@ public:
 	virtual ~Camera();
 
 	void			Update();
+	void			Center( vec2 position );
 
 	// TODO: Match this with GLMs declaration
 	void			SetProjection( float aspectRatio, float fov, float nearplane, float farplane );
@@ -43,6 +46,7 @@ public:
 	static int		lua_Create( lua_State* lua );
 	static int		lua_Projection( lua_State* lua );
 	static int		lua_Position( lua_State* lua );
+	static int		lua_Center( lua_State* lua );
 	static int		lua_Rotation( lua_State* lua );
 	static int		lua_Active( lua_State* lua );
 

@@ -6,7 +6,7 @@ Mesh* GameObject::quad = nullptr;
 GameObject::GameObject()
 	: m_bAlive( false ), m_pTexture( nullptr ),
 	m_collisionBounds( 0, 0, 32, 32 ), m_renderBounds( 0, 0, 32, 32 ),
-	m_uvMin( 0, 0 ), m_uvLength( 1, 1 )
+	m_uvMin( 0, 0 ), m_uvLength( 1, 1 ), m_friction( 1, 1 )
 {
 	if( quad == nullptr )
 	{
@@ -27,6 +27,14 @@ GameObject::GameObject()
 		quad = new Mesh();
 		quad->AddVertices( vertices, 4, indices, 6 );
 	}
+}
+
+GameObject::GameObject( const GameObject& ref )
+	: m_collisionBounds( ref.m_collisionBounds ), m_renderBounds( ref.m_renderBounds ),
+	m_position( ref.m_position ), m_velocity( ref.m_velocity ), m_friction( ref.m_friction ),
+	m_color( ref.m_color ), m_pTexture( ref.m_pTexture ),
+	m_uvMin( ref.m_uvMin ), m_uvLength( ref.m_uvLength ), m_bAlive( ref.m_bAlive )
+{
 }
 
 GameObject::~GameObject()
@@ -57,7 +65,7 @@ void GameObject::Render( Shader* shader )
 
 bool GameObject::Collides( const GameObject& ref )
 {
-	return ( m_collisionBounds.Intersect( ref.m_collisionBounds ) );
+	return ( GetWorldBounds().Intersect( ref.GetWorldBounds() ) );
 }
 
 void GameObject::UpdateAll()
@@ -129,6 +137,7 @@ void GameObject::lua_Register( lua_State* lua )
 	luaL_Reg funcs[] =
 	{
 		{ "Create", lua_Create },
+		{ "Copy", lua_Copy },
 		{ "Destroy", lua_Destroy },
 		{ "CollisionBounds", lua_CollisionBounds },
 		{ "RenderBounds", lua_RenderBounds },
@@ -142,6 +151,7 @@ void GameObject::lua_Register( lua_State* lua )
 		{ "UVMin", lua_UVMin },
 		{ "UVLength", lua_UVLength },
 		{ "Alive", lua_Alive },
+		{ "Collides", lua_Collides },
 		{ NULL, NULL }
 	};
 
@@ -178,6 +188,24 @@ LIMP( Create )
 	GameObject* ptr = new GameObject();
 	s_vecObjects.push_back( ptr );
 	return lua_Write( lua, ptr );
+}
+
+LIMP( Copy )
+{
+	int result = 0;
+
+	if( lua_gettop( lua ) >= 1 )
+	{
+		GameObject* ptr = lua_Read( lua, 1 );
+		if( ptr )
+		{
+			GameObject* newptr = new GameObject( *ptr );
+			s_vecObjects.push_back( newptr );
+			result = lua_Write( lua, newptr );
+		}
+	}
+
+	return result;
 }
 
 LIMP( Destroy )

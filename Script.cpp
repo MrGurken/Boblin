@@ -22,6 +22,14 @@ bool Script::Hotload()
 	if( m_bValid )
 	{
 		FileInfo curInfo( m_strFilename );
+
+		if( m_strFilename.compare( "./res/scripts/player.lua"  ) == 0 )
+		{
+			//printf( "%u\n", m_fileInfo.GetModifiedTime() );
+			//printf( "%u.\n", curInfo.GetModifiedTime() );
+		}
+			//printf( "%u : %u\n", curInfo.GetModifiedTime(), m_fileInfo.GetModifiedTime() );
+
 		if( curInfo != m_fileInfo )
 		{
 			printf( "Script.cpp: Hotloading = %s\n", m_strFilename.c_str() );
@@ -52,6 +60,7 @@ bool Script::Run( const string& filename )
 	}
 
 	m_fileInfo.Get( filename );
+	printf("%u\n", m_fileInfo.GetModifiedTime());
 
 	return result;
 }
@@ -124,11 +133,16 @@ bool Runtime::Run( const string& filename )
 			curinfo.Get( filename );
 
 			// Has it been modified since we last ran it?
+			printf( "Found script %s\n", filename.c_str() );
 			if( curinfo != it->GetFileInfo() )
 			{
+				printf( "Cur: %u\n", curinfo.GetModifiedTime() );
+				printf( "Prev: %u\n", it->GetFileInfo().GetModifiedTime() );
 				result = it->Run( filename );
-				found = true;
+				printf("Rerunning!\n");
 			}
+
+			found = true;
 		}
 	}
 
@@ -178,6 +192,11 @@ int Runtime::FindRef( int ref )
 	return index;
 }
 
+int Runtime::Seconds( int sec )
+{
+	return ( sec * Config::Instance().GetFPS() );
+}
+
 void Runtime::Update()
 {
 	for( int i=0; i<RUNTIME_MAX_REFS; i++ )
@@ -211,6 +230,7 @@ void Runtime::lua_Register( lua_State* lua )
 	lua_register( lua, "Run", lua_Run );
 	lua_register( lua, "Refer", lua_Refer );
 	lua_register( lua, "Unrefer", lua_Unrefer );
+	lua_register( lua, "Seconds", lua_Seconds );
 	lua_register( lua, "Quit", lua_Quit );
 }
 
@@ -251,6 +271,20 @@ int Runtime::lua_Unrefer( lua_State* lua )
 	{
 		int ref = static_cast<int>( lua_tonumber( lua, 1 ) );
 		Runtime::Instance().Unrefer( ref );
+	}
+
+	return result;
+}
+
+int Runtime::lua_Seconds( lua_State* lua )
+{
+	int result = 0;
+
+	if( lua_gettop( lua ) >= 1 )
+	{
+		int sec = static_cast<int>( lua_tonumber( lua, 1 ) );
+		lua_pushnumber( lua, Runtime::Instance().Seconds( sec ) );
+		result = 1;
 	}
 
 	return result;
