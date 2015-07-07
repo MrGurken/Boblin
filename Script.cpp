@@ -53,7 +53,6 @@ bool Script::Run( const string& filename )
 	}
 
 	m_uFileTime = FileInfo::GetLastModified( filename );
-	printf( "%s : %u\n", filename.c_str(), m_uFileTime );
 
 	return result;
 }
