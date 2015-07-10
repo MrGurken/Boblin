@@ -45,6 +45,15 @@ bool Input::Update()
 		}
 		else if( e.type == SDL_MOUSEWHEEL )
 		{
+			m_iMouseWheelDelta = e.wheel.y;
+		}
+		else if( e.type == SDL_MOUSEBUTTONDOWN )
+		{
+			m_buttons[e.button.button-1] = true;
+		}
+		else if( e.type == SDL_MOUSEBUTTONUP )
+		{
+			m_buttons[e.button.button-1] = false;
 		}
 	}
 
@@ -141,6 +150,38 @@ void Input::lua_Register( lua_State* lua )
 	lua_register( lua, "MBReleased", lua_MBReleased );
 	lua_register( lua, "MousePosition", lua_MousePosition );
 	lua_register( lua, "MouseDelta", lua_MouseDelta );
+
+	// register SDL scancodes (this is so ugly)
+	lua_newtable( lua );
+	int _KEYINDEX = 4;
+	KEY( A ); KEY( B ); KEY( C ); KEY( D ); KEY( E ); KEY( F ); KEY( G ); KEY( H ); KEY( I );
+	KEY( J ); KEY( K ); KEY( L ); KEY( M ); KEY( O ); KEY( P ); KEY( Q ); KEY( R ); KEY( S );
+	KEY( S ); KEY( T ); KEY( U ); KEY( V ); KEY( W ); KEY( X );	KEY( Y ); KEY( Z );
+	KEY( NUM_1 ); KEY( NUM_2 ); KEY( NUM_3 ); KEY( NUM_4 ); KEY( NUM_5 );
+	KEY( NUM_6 ); KEY( NUM_7 ); KEY( NUM_8 ); KEY( NUM_9 ); KEY( NUM_0 );
+	KEY( Return ); KEY( Escape ); KEY( Backspace ); KEY( Tab ); KEY( Space );
+	KEY( Minus ); KEY( Equals ); KEY( LeftBracket ); KEY( RightBracket ); KEY( Backslash );
+	KEY( Semicolon ); KEY( Apostrophe ); KEY( Grave ); KEY( Comma );
+	KEY( Period ); KEY( Slash ); KEY( CapsLock );
+	KEY( F1 ); KEY( F2 ); KEY( F3 ); KEY( F4 ); KEY( F5 ); KEY( F6 );
+	KEY( F7 ); KEY( F8 ); KEY( F9 ); KEY( F10 ); KEY( F11 ); KEY( F12 );
+	KEY( PrintScreen ); KEY( ScrollLock ); KEY( Pause ); KEY( Insert );
+	KEY( Home ); KEY( PageUp ); KEY( Delete ); KEY( End ); KEY( PageDown );
+	KEY( Right ); KEY( Left ); KEY( Down ); KEY( Up );
+	KEY( KP_Divide ); KEY( KP_Multiply ); KEY( KP_Minus ); KEY( KP_Plus ); KEY( KP_Enter );
+	KEY( KP_1 ); KEY( KP_2 ); KEY( KP_3 ); KEY( KP_4 ); KEY( KP_5 );
+	KEY( KP_6  ); KEY( KP_7 ); KEY( KP_8 ); KEY( KP_9 ); KEY( KP_0 ); KEY( KP_Period );
+	_KEYINDEX = 224;
+	KEY( LeftControl ); KEY( LeftShift ); KEY( LeftAlt );
+	KEY( RightControl ); KEY( RightShift ); KEY( RightAlt );
+	lua_setglobal( lua, "Keys" );
+
+	// register SDL mouse button (also ugly)
+	lua_newtable( lua );
+	BUTTON( Left, 0 );
+	BUTTON( Middle, 1 );
+	BUTTON( Right, 2 );
+	lua_setglobal( lua, "Buttons" );
 }
 
 int Input::lua_KeyDown( lua_State* lua )

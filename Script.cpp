@@ -230,6 +230,7 @@ void Runtime::lua_Register( lua_State* lua )
 	lua_register( lua, "Refer", lua_Refer );
 	lua_register( lua, "Unrefer", lua_Unrefer );
 	lua_register( lua, "Seconds", lua_Seconds );
+	lua_register( lua, "ClearColor", lua_ClearColor );
 	lua_register( lua, "Quit", lua_Quit );
 }
 
@@ -284,6 +285,23 @@ int Runtime::lua_Seconds( lua_State* lua )
 		int sec = static_cast<int>( lua_tonumber( lua, 1 ) );
 		lua_pushnumber( lua, Runtime::Instance().Seconds( sec ) );
 		result = 1;
+	}
+
+	return result;
+}
+
+int Runtime::lua_ClearColor( lua_State* lua )
+{
+	int result = 0;
+
+	if( lua_gettop( lua ) >= 4 )
+	{
+		float r = static_cast<float>( lua_tonumber( lua, 1 ) );
+		float g = static_cast<float>( lua_tonumber( lua, 2 ) );
+		float b = static_cast<float>( lua_tonumber( lua, 3 ) );
+		float a = static_cast<float>( lua_tonumber( lua, 4 ) );
+
+		glClearColor( r, g, b, a );
 	}
 
 	return result;

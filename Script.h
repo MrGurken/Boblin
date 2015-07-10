@@ -72,6 +72,7 @@ public:
 	static int		lua_Refer( lua_State* lua );
 	static int		lua_Unrefer( lua_State* lua );
 	static int		lua_Seconds( lua_State* lua );
+	static int		lua_ClearColor( lua_State* lua );
 	static int		lua_Quit( lua_State* lua );
 
 private:

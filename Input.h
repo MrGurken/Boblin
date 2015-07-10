@@ -9,10 +9,8 @@ using std::vector;
 using std::string;
 
 #define INPUT_MAX_BUTTONS 3
-#define INPUT_ASCII_MIN 3
-#define INPUT_ASCII_MAX 127
-#define INPUT_MOD_MIN SDLK_CAPSLOCK
-#define INPUT_MOD_MAX SDLK_SLEEP
+#define KEY( _name ) lua_pushnumber( lua, _KEYINDEX++ ); lua_setfield( lua, -2, #_name );
+#define BUTTON( _name, _index ) lua_pushnumber( lua, _index ); lua_setfield( lua, -2, #_name );
 
 class Input
 {

@@ -55,6 +55,8 @@ int main( int argc, char* argv[] )
 				else
 #endif
 				{
+					glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+
 					const char* vsource = "#version 330\n"
 						"layout (location=0) in vec3 PositionIn;"
 						"layout (location=1) in vec2 UVIn;"
@@ -105,7 +107,6 @@ int main( int argc, char* argv[] )
 						GameObject::UpdateAll();
 
 						// Render
-						glClearColor( 1.0f, 0.0f, 0.0f, 0.0f );
 						glClear( GL_COLOR_BUFFER_BIT );
 
 						shader.Bind();
