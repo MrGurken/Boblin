@@ -12,6 +12,7 @@
 #include "Sound.h"
 #include "Config.h"
 #include "Font.h"
+#include "Text.h"
 
 int main( int argc, char* argv[] )
 {
@@ -76,9 +77,8 @@ int main( int argc, char* argv[] )
 						"in vec2 UV0;"
 						"out vec4 FragColor;"
 						"uniform vec4 Color;"
-						"uniform vec4 Shade;"
 						"uniform sampler2D DiffuseMap;"
-						"void main() { FragColor = ( texture( DiffuseMap, UV0 ) * Shade ) + Color; }";
+						"void main() { FragColor = texture( DiffuseMap, UV0 ) * Color; }";
 
 					Shader shader;
 					shader.Compile( vsource, GL_VERTEX_SHADER );
@@ -91,7 +91,6 @@ int main( int argc, char* argv[] )
 					shader.AddUniform( "UVMin" );
 					shader.AddUniform( "UVLength" );
 					shader.AddUniform( "Color" );
-					shader.AddUniform( "Shade" );
 
 					string mainScript = Config::Instance().GetScriptFolder() + "/main.lua";
 					Runtime::Instance().Run( mainScript );
@@ -109,6 +108,12 @@ int main( int argc, char* argv[] )
 						printf(" FAILED TO LOAD FONT ");
 						int i =0;
 					}
+
+					Text text;
+					text.SetFont( font );
+					text.SetText( "Not long\nReally long line" );
+					text.SetVisible( true );
+					text.SetPosition( vec2( 128, 256 ) );
 
 					while( Runtime::Instance().GetRunning() )
 					{
@@ -137,8 +142,7 @@ int main( int argc, char* argv[] )
 						}
 
 						GameObject::RenderAll( &shader );
-
-						font->RenderText( &shader, "Testing and Testing\nEven more testing", vec2( 32, 256 ) );
+						Text::RenderAll( &shader );
 
 						SDL_GL_SwapWindow( window );
 

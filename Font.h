@@ -28,7 +28,10 @@ public:
 	bool	Load( const AssetInfo* info ) override;
 
 	void	RenderText( Shader* shader, const char* text, vec2 position );
+	void	RenderText( Shader* shader, const string& text, vec2 position );
 	void	RenderGlyph( Shader* shader, const Glyph& glyph, vec2 position );
+	vec2	Size( const char* text );
+	vec2	Size( const string& text );
 
 	int		GetSize() const;
 

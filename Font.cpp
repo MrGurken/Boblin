@@ -36,8 +36,6 @@ void Font::RenderText( Shader* shader, const char* text, vec2 position )
 
 	shader->SetUniform( "UVMin", vec2( 0, 0 ) );
 	shader->SetUniform( "UVLength", vec2( 1, 1 ) );
-	shader->SetUniform( "Color", vec4( 1.0f, 1.0f, 1.0f, 0.0f ) );
-	shader->SetUniform( "Shader", vec4( 1.0f ) );
 
 	int len = strlen( text );
 	for( int i=0; i<len; i++ )
@@ -45,12 +43,36 @@ void Font::RenderText( Shader* shader, const char* text, vec2 position )
 		if( text[i] == '\n' )
 		{
 			offset.x = 0;
-			offset.y = static_cast<float>( m_iSize );
+			offset.y += static_cast<float>( m_iSize );
 		}
 		else
 		{
 			int index = text[i];
 		
+			RenderGlyph( shader, m_glyphs[index], position+offset );
+			offset.x += m_glyphs[index].GetWidth();
+		}
+	}
+}
+
+void Font::RenderText( Shader* shader, const string& text, vec2 position )
+{
+	vec2 offset;
+
+	shader->SetUniform( "UVMin", vec2( 0, 0 ) );
+	shader->SetUniform( "UVLength", vec2( 1, 1 ) );
+
+	for( string::const_iterator it = text.begin(); it != text.end(); it++ )
+	{
+		if( *it == '\n' )
+		{
+			offset.x = 0;
+			offset.y += static_cast<float>( m_iSize );
+		}
+		else
+		{
+			int index = *it;
+
 			RenderGlyph( shader, m_glyphs[index], position+offset );
 			offset.x += m_glyphs[index].GetWidth();
 		}
@@ -68,6 +90,57 @@ void Font::RenderGlyph( Shader* shader, const Glyph& glyph, vec2 position )
 	Mesh::GetQuad()->Render();
 }
 
+vec2 Font::Size( const char* text )
+{
+	float maxWidth = 0.0f;
+	float curWidth = 0.0f;
+	int curHeight = m_iSize;
+
+	int len = strlen( text );
+	for( int i=0; i<len; i++ )
+	{
+		if( text[i] == '\n' )
+		{
+			curHeight += m_iSize;
+			curWidth = 0.0f;
+		}
+		else
+		{
+			int index = text[i];
+			curWidth += m_glyphs[index].GetWidth();
+			if( curWidth > maxWidth )
+				maxWidth = curWidth;
+		}
+	}
+
+	return vec2( maxWidth, static_cast<float>( curHeight ) );
+}
+
+vec2 Font::Size( const string& text )
+{
+	float maxWidth = 0.0f;
+	float curWidth = 0.0f;
+	int curHeight = m_iSize;
+
+	for( string::const_iterator it = text.begin(); it != text.end(); it++ )
+	{
+		if( *it == '\n' )
+		{
+			curHeight += m_iSize;
+			curWidth = 0.0f;
+		}
+		else
+		{
+			int index = *it;
+			curWidth += m_glyphs[index].GetWidth();
+			if( curWidth > maxWidth )
+				maxWidth = curWidth;
+		}
+	}
+
+	return vec2( maxWidth, static_cast<float>( curHeight ) );
+}
+
 int Font::GetSize() const
 {
 	return m_iSize;
@@ -79,6 +152,17 @@ int Font::GetSize() const
 
 void Font::lua_Register( lua_State* lua )
 {
+	luaL_Reg funcs[] =
+	{
+		{ "Load", lua_Load },
+		{ NULL, NULL }
+	};
+
+	luaL_newmetatable( lua, "Font" );
+	luaL_setfuncs( lua, funcs, 0 );
+	lua_pushvalue( lua, -1 );
+	lua_setfield( lua, -2, "__index" );
+	lua_setglobal( lua, "Font" );
 }
 
 Font* Font::lua_Read( lua_State* lua, int index )

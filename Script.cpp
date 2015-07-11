@@ -79,6 +79,8 @@ Runtime::Runtime()
 	lua_Register( m_pLua );
 	File::lua_Register( m_pLua );
 	GameObject::lua_Register( m_pLua );
+	Text::lua_Register( m_pLua );
+	Font::lua_Register( m_pLua );
 	Texture::lua_Register( m_pLua );
 	Camera::lua_Register( m_pLua );
 	Maths::lua_Register( m_pLua );

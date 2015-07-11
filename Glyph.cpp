@@ -15,7 +15,7 @@ bool Glyph::GenerateGlyph( Glyph* glyph, TTF_Font* font, char character )
 {
 	bool result = false;
 
-	SDL_Color color = { 1, 1, 1 };
+	SDL_Color color = { 255, 255, 255 };
 	SDL_Surface* surface = TTF_RenderGlyph_Blended( font, character, color );
 	if( surface )
 	{

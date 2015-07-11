@@ -8,6 +8,7 @@ using std::vector;
 #include "maths.h"
 #include "File.h"
 #include "GameObject.h"
+#include "Text.h"
 #include "Texture.h"
 #include "FileInfo.h"
 #include "Camera.h"
