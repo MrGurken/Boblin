@@ -14,11 +14,13 @@ Texture::~Texture()
 {
 }
 
-bool Texture::Load( const string& filename )
+//bool Texture::Load( const string& filename )
+bool Texture::Load( const AssetInfo* info )
 {
 	bool result = false;
 
-	SDL_Surface* img = IMG_Load( filename.c_str() );
+	//SDL_Surface* img = IMG_Load( filename.c_str() );
+	SDL_Surface* img = IMG_Load( info->filename );
 	if( img )
 	{
 		glGenTextures( 1, &m_glID );
@@ -27,10 +29,7 @@ bool Texture::Load( const string& filename )
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 
-		GLenum mode = GL_RGB;
-		if( img->format->BytesPerPixel == 4 )
-			mode = GL_RGBA;
-
+		GLenum mode = ( img->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB );
 		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, img->w, img->h, 0, mode, GL_UNSIGNED_BYTE, img->pixels );
 
 		m_iWidth = img->w;
@@ -107,7 +106,8 @@ int Texture::lua_Load( lua_State* lua )
 	if( lua_gettop( lua ) >= 1 )
 	{
 		const char* path = lua_tostring( lua, 1 );
-		Texture* t = Assets::Instance().Load<Texture>( path );
+		AssetInfo info = { path };
+		Texture* t = Assets::Instance().Load<Texture>( &info );
 
 		if( t )
 		{

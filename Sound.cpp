@@ -10,11 +10,13 @@ Sound::~Sound()
     Unload();
 }
 
-bool Sound::Load( const string& filename )
+//bool Sound::Load( const string& filename )
+bool Sound::Load( const AssetInfo* info )
 {
     bool result = false;
     
-    m_sdlChunk = Mix_LoadWAV( filename.c_str() );
+    //m_sdlChunk = Mix_LoadWAV( filename.c_str() );
+	m_sdlChunk = Mix_LoadWAV( info->filename );
     if( m_sdlChunk )
         result = true;
     
@@ -99,7 +101,8 @@ int Sound::lua_Load( lua_State* lua )
     if( lua_gettop( lua ) >= 1 )
     {
         const char* filename = lua_tostring( lua, 1 );
-        Sound* ptr = Assets::Instance().Load<Sound>( filename );
+		AssetInfo info = { filename };
+        Sound* ptr = Assets::Instance().Load<Sound>( &info );
         if( ptr )
         {
             result = lua_Write( lua, ptr );
@@ -176,11 +179,13 @@ Music::~Music()
     Unload();
 }
 
-bool Music::Load( const string& filename )
+//bool Music::Load( const string& filename )
+bool Music::Load( const AssetInfo* info )
 {
     bool result = false;
     
-    m_sdlMusic = Mix_LoadMUS( filename.c_str() );
+    //m_sdlMusic = Mix_LoadMUS( filename.c_str() );
+	m_sdlMusic = Mix_LoadMUS( info->filename );
     if( m_sdlMusic )
         result = true;
     
@@ -266,7 +271,8 @@ int Music::lua_Load( lua_State* lua )
     if( lua_gettop( lua ) >= 1 )
     {
         const char* filename = lua_tostring( lua, 1 );
-        Music* ptr = Assets::Instance().Load<Music>( filename );
+		AssetInfo info = { filename };
+        Music* ptr = Assets::Instance().Load<Music>( &info );
         if( ptr )
         {
             result = lua_Write( lua, ptr );

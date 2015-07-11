@@ -2,7 +2,8 @@
 
 Asset::Asset(){}
 Asset::~Asset(){}
-bool Asset::Load( const string& filename ) { return false; }
+//bool Asset::Load( const string& filename ) { return false; }
+bool Asset::Load( const AssetInfo* info ) { return false; }
 void Asset::Unload() {}
 
 Assets& Assets::Instance()

@@ -24,12 +24,16 @@ public:
 	void	SetRenderType( GLenum renderType );
 	GLenum	GetRenderType() const;
 
+	static Mesh* GetQuad();
+
 private:
 	GLuint m_glVAO;
 	GLuint m_glVBO;
 	GLuint m_glIBO;
 	GLenum m_glRenderType;
 	int m_iSize;
+
+	static Mesh* s_pQuad;
 };
 
 #endif

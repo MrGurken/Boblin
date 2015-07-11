@@ -11,7 +11,8 @@ public:
     Sound();
     virtual ~Sound();
     
-    bool    Load( const string& filename );
+    //bool    Load( const string& filename );
+	bool	Load( const AssetInfo* info );
     void    Unload();
     
     void    Play( int channel = -1 );
@@ -38,7 +39,8 @@ public:
     Music();
     virtual ~Music();
     
-    bool        Load( const string& filename );
+    //bool        Load( const string& filename );
+	bool		Load( const AssetInfo* info );
     void        Unload();
     
     void        Play( int channel = -1 );

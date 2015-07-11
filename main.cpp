@@ -1,5 +1,6 @@
 #include "lua.hpp"
 #include <stdio.h>
+#include "LibIncluder.h"
 
 #include "mesh.h"
 #include "Shader.h"
@@ -10,6 +11,7 @@
 #include "Input.h"
 #include "Sound.h"
 #include "Config.h"
+#include "Font.h"
 
 int main( int argc, char* argv[] )
 {
@@ -21,7 +23,7 @@ int main( int argc, char* argv[] )
 		return -1;
 	}
 
-	if( SDL_Init( SDL_INIT_EVERYTHING ) < 0 )
+	if( SDL_Init( SDL_INIT_EVERYTHING ) < 0 || TTF_Init() < 0 )
 	{
 		printf( "main.cpp: Failed to initialize SDL.\n" );
 		result = -1;
@@ -55,7 +57,9 @@ int main( int argc, char* argv[] )
 				else
 #endif
 				{
-					glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+					glEnable( GL_BLEND );
+					glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+					glClearColor( 1.0f, 0.0f, 0.0f, 0.0f );
 
 					const char* vsource = "#version 330\n"
 						"layout (location=0) in vec3 PositionIn;"
@@ -71,8 +75,10 @@ int main( int argc, char* argv[] )
 					const char* fsource = "#version 330\n"
 						"in vec2 UV0;"
 						"out vec4 FragColor;"
-						"uniform sampler2D diffuseMap;"
-						"void main() { FragColor = texture( diffuseMap, UV0 ); }";
+						"uniform vec4 Color;"
+						"uniform vec4 Shade;"
+						"uniform sampler2D DiffuseMap;"
+						"void main() { FragColor = ( texture( DiffuseMap, UV0 ) * Shade ) + Color; }";
 
 					Shader shader;
 					shader.Compile( vsource, GL_VERTEX_SHADER );
@@ -84,6 +90,8 @@ int main( int argc, char* argv[] )
 					shader.AddUniform( "ProjectionMatrix" );
 					shader.AddUniform( "UVMin" );
 					shader.AddUniform( "UVLength" );
+					shader.AddUniform( "Color" );
+					shader.AddUniform( "Shade" );
 
 					string mainScript = Config::Instance().GetScriptFolder() + "/main.lua";
 					Runtime::Instance().Run( mainScript );
@@ -91,6 +99,16 @@ int main( int argc, char* argv[] )
 					Input::Instance().SetWindow( window );
 
 					const unsigned int targetTicks = 1000 / Config::Instance().GetFPS();
+
+					FontInfo fontInfo;
+					fontInfo.filename = "C:/windows/fonts/verdana.ttf";
+					fontInfo.size = 12;
+					Font* font = Assets::Instance().Load<Font>( &fontInfo );
+					if( font == nullptr )
+					{
+						printf(" FAILED TO LOAD FONT ");
+						int i =0;
+					}
 
 					while( Runtime::Instance().GetRunning() )
 					{
@@ -120,6 +138,8 @@ int main( int argc, char* argv[] )
 
 						GameObject::RenderAll( &shader );
 
+						font->RenderText( &shader, "Testing and Testing\nEven more testing", vec2( 32, 256 ) );
+
 						SDL_GL_SwapWindow( window );
 
 						// Adjust time
@@ -144,6 +164,9 @@ int main( int argc, char* argv[] )
 			printf( "main.cpp: Failed to create window.\n" );
 			result = -1;
 		}
+
+		TTF_Quit();
+		SDL_Quit();
 	}
 
 	return result;

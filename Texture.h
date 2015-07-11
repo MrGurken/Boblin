@@ -13,7 +13,8 @@ public:
 	Texture( const Texture& ref );
 	virtual ~Texture();
 
-	bool	Load( const string& filename ) override;
+	//bool	Load( const string& filename ) override;
+	bool	Load( const AssetInfo* info ) override;
 	void	Unload() override;
 
 	void	Bind( GLenum slot = GL_TEXTURE0 );

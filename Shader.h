@@ -40,6 +40,7 @@ public:
 	void	SetUniformf( const string& uniform, float value );
 	void	SetUniform( const string& uniform, vec2 value );
 	void	SetUniform( const string& uniform, vec3 value );
+	void	SetUniform( const string& uniform, vec4 value );
 	void	SetUniform( const string& uniform, mat4 value );
 
 private:

@@ -137,6 +137,13 @@ void Shader::SetUniform( const string& uniform, vec3 value )
 		glUniform3f( it->second, value.x, value.y, value.z );
 }
 
+void Shader::SetUniform( const string& uniform, vec4 value )
+{
+	map<string,GLuint>::iterator it = m_mapUniforms.find( uniform );
+	if( it != m_mapUniforms.end() )
+		glUniform4f( it->second, value.r, value.g, value.b, value.a );
+}
+
 void Shader::SetUniform( const string& uniform, mat4 value )
 {
 	map<string,GLuint>::iterator it = m_mapUniforms.find( uniform );

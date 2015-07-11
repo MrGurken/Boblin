@@ -1,5 +1,7 @@
 #include "mesh.h"
 
+Mesh* Mesh::s_pQuad = nullptr;
+
 Mesh::Mesh()
 	: m_glVAO( 0 ), m_glVBO( 0 ), m_glIBO( 0 ), m_iSize( 0 ), m_glRenderType( GL_TRIANGLES )
 {
@@ -13,6 +15,8 @@ Mesh::~Mesh()
 		glDeleteBuffers( 1, &m_glVBO );
 	if( m_glIBO != 0 )
 		glDeleteBuffers( 1, &m_glIBO );
+
+	// TODO: Refcount quad to remove it when no mesh is using it?
 }
 
 void Mesh::AddVertices( Vertex* vertices, int nv, GLuint* indices, int ni )
@@ -55,3 +59,28 @@ void Mesh::Render()
 
 void Mesh::SetRenderType( GLenum renderType ) { m_glRenderType = renderType; }
 GLenum Mesh::GetRenderType() const { return m_glRenderType; }
+
+Mesh* Mesh::GetQuad()
+{
+	if( s_pQuad == nullptr )
+	{
+		Vertex vertices[] =
+		{
+			{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+			{ 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },
+			{ 1.0f, 0.0f, 0.0f, 1.0f, 0.0f },
+			{ 1.0f, 1.0f, 0.0f, 1.0f, 1.0f }
+		};
+
+		GLuint indices[] =
+		{
+			0, 1, 2,
+			1, 3, 2
+		};
+
+		s_pQuad = new Mesh();
+		s_pQuad->AddVertices( vertices, 4, indices, 6 );
+	}
+
+	return s_pQuad;
+}

@@ -36,6 +36,7 @@ public:
 	void SetVelocity( vec2 velocity );
 	void SetFriction( vec2 friction );
 	void SetColor( vec4 color );
+	void SetShade( vec4 shade );
 	void SetTexture( Texture* texture );
 	void SetCrop( rect crop );
 	void SetUVMin( vec2 uv );
@@ -49,6 +50,7 @@ public:
 	vec2 GetVelocity() const;
 	vec2 GetFriction() const;
 	vec4 GetColor() const;
+	vec4 GetShade() const;
 	Texture* GetTexture() const;
 	rect GetCrop() const;
 	vec2 GetUVMin() const;
@@ -68,6 +70,7 @@ public:
 	LDEC( Velocity );
 	LDEC( Friction );
 	LDEC( Color );
+	LDEC( Shade );
 	LDEC( Texture );
 	LDEC( Crop );
 	LDEC( UVMin );
@@ -82,13 +85,13 @@ private:
 	vec2 m_velocity;
 	vec2 m_friction;
 	vec4 m_color;
+	vec4 m_shade;
 	Texture* m_pTexture;
 	vec2 m_uvMin;
 	vec2 m_uvLength;
 	bool m_bAlive;
 
 	static vector<GameObject*> s_vecObjects;
-	static Mesh* quad;
 };
 
 #endif

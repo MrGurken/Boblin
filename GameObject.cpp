@@ -1,38 +1,19 @@
 #include "GameObject.h"
 
 vector<GameObject*> GameObject::s_vecObjects;
-Mesh* GameObject::quad = nullptr;
 
 GameObject::GameObject()
 	: m_bAlive( false ), m_pTexture( nullptr ),
 	m_collisionBounds( 0, 0, 32, 32 ), m_renderBounds( 0, 0, 32, 32 ),
-	m_uvMin( 0, 0 ), m_uvLength( 1, 1 ), m_friction( 1, 1 )
+	m_uvMin( 0, 0 ), m_uvLength( 1, 1 ), m_friction( 1, 1 ),
+	m_color( 0.0f ), m_shade( 1.0f )
 {
-	if( quad == nullptr )
-	{
-		Vertex vertices[] =
-		{
-			{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
-			{ 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },
-			{ 1.0f, 0.0f, 0.0f, 1.0f, 0.0f },
-			{ 1.0f, 1.0f, 0.0f, 1.0f, 1.0f }
-		};
-
-		GLuint indices[] =
-		{
-			0, 1, 2,
-			1, 3, 2
-		};
-
-		quad = new Mesh();
-		quad->AddVertices( vertices, 4, indices, 6 );
-	}
 }
 
 GameObject::GameObject( const GameObject& ref )
 	: m_collisionBounds( ref.m_collisionBounds ), m_renderBounds( ref.m_renderBounds ),
 	m_position( ref.m_position ), m_velocity( ref.m_velocity ), m_friction( ref.m_friction ),
-	m_color( ref.m_color ), m_pTexture( ref.m_pTexture ),
+	m_color( ref.m_color ), m_shade( ref.m_shade ), m_pTexture( ref.m_pTexture ),
 	m_uvMin( ref.m_uvMin ), m_uvLength( ref.m_uvLength ), m_bAlive( ref.m_bAlive )
 {
 }
@@ -54,12 +35,15 @@ void GameObject::Render( Shader* shader )
 	else
 		glBindTexture( GL_TEXTURE_2D, 0 );
 
-	mat4 world = translate( vec3( m_position.x+m_renderBounds.x, m_position.y+m_renderBounds.y, 0.0f ) ) * scale( vec3( m_renderBounds.w, m_renderBounds.h, 1.0f ) );
+	mat4 world = translate( vec3( m_position.x+m_renderBounds.x, m_position.y+m_renderBounds.y, 0.0f ) ) *
+					scale( vec3( m_renderBounds.w, m_renderBounds.h, 1.0f ) );
 	shader->SetUniform( "ModelMatrix", world );
 	shader->SetUniform( "UVMin", m_uvMin );
 	shader->SetUniform( "UVLength", m_uvLength );
+	shader->SetUniform( "Color", m_color );
+	shader->SetUniform( "Shade", m_shade );
 
-	quad->Render();
+	Mesh::GetQuad()->Render();
 }
 
 bool GameObject::Collides( const GameObject& ref )
@@ -87,6 +71,7 @@ void GameObject::SetPosition( vec2 position ) { m_position = position; }
 void GameObject::SetVelocity( vec2 velocity ) { m_velocity = velocity; }
 void GameObject::SetFriction( vec2 friction ) { m_friction = friction; }
 void GameObject::SetColor( vec4 color ) { m_color = color; }
+void GameObject::SetShade( vec4 shade ) { m_shade = shade; }
 void GameObject::SetTexture( Texture* texture ) { m_pTexture = texture; }
 void GameObject::SetCrop( rect crop )
 {
@@ -111,6 +96,7 @@ vec2 GameObject::GetPosition() const { return m_position; }
 vec2 GameObject::GetVelocity() const { return m_velocity; }
 vec2 GameObject::GetFriction() const { return m_friction; }
 vec4 GameObject::GetColor() const { return m_color; }
+vec4 GameObject::GetShade() const { return m_shade; }
 Texture* GameObject::GetTexture() const { return m_pTexture; }
 rect GameObject::GetCrop() const
 {
@@ -145,6 +131,7 @@ void GameObject::lua_Register( lua_State* lua )
 		{ "Velocity", lua_Velocity },
 		{ "Friction", lua_Friction },
 		{ "Color", lua_Color },
+		{ "Shade", lua_Shade },
 		{ "Texture", lua_Texture },
 		{ "Crop", lua_Crop },
 		{ "UVMin", lua_UVMin },
@@ -395,18 +382,33 @@ LIMP( Color )
 		if( ptr )
 		{
 			if( nargs >= 5 ) // setting
-			{
 				ptr->SetColor( Vec4::lua_Parse( lua, 2 ) );
-			}
 			else if( nargs >= 2 ) // setting
-			{
 				ptr->SetColor( Vec4::lua_Read( lua, 2 ) );
-			}
 			else // getting
-			{
-				vec4 v = ptr->GetColor();
-				result = Vec4::lua_Write( lua, v );
-			}
+				result = Vec4::lua_Write( lua, ptr->GetColor() );
+		}
+	}
+
+	return result;
+}
+
+LIMP( Shade )
+{
+	int result = 0;
+
+	int nargs = lua_gettop( lua );
+	if( nargs >= 1 )
+	{
+		GameObject* ptr = lua_Read( lua, 1 );
+		if( ptr )
+		{
+			if( nargs >= 5 ) // setting
+				ptr->SetShade( Vec4::lua_Parse( lua, 2 ) );
+			else if( nargs >= 2 ) // setting
+				ptr->SetShade( Vec4::lua_Read( lua, 2 ) );
+			else
+				result = Vec4::lua_Write( lua, ptr->GetShade() );
 		}
 	}
 
