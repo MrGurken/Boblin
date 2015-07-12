@@ -99,22 +99,6 @@ int main( int argc, char* argv[] )
 
 					const unsigned int targetTicks = 1000 / Config::Instance().GetFPS();
 
-					FontInfo fontInfo;
-					fontInfo.filename = "C:/windows/fonts/verdana.ttf";
-					fontInfo.size = 12;
-					Font* font = Assets::Instance().Load<Font>( &fontInfo );
-					if( font == nullptr )
-					{
-						printf(" FAILED TO LOAD FONT ");
-						int i =0;
-					}
-
-					Text text;
-					text.SetFont( font );
-					text.SetText( "Not long\nReally long line" );
-					text.SetVisible( true );
-					text.SetPosition( vec2( 128, 256 ) );
-
 					while( Runtime::Instance().GetRunning() )
 					{
 						unsigned int startTick = SDL_GetTicks();

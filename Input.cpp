@@ -36,6 +36,10 @@ bool Input::Update()
 		{
 			RemoveKey( m_vecKeys, e.key.keysym.scancode );
 		}
+		else if( e.type == SDL_TEXTINPUT )
+		{
+			m_ssTextInput << e.text.text;
+		}
 		else if( e.type == SDL_MOUSEMOTION )
 		{
 			vec2 prevPos = m_mousePosition;
@@ -58,6 +62,40 @@ bool Input::Update()
 	}
 
 	return result;
+}
+
+void Input::StartTextInput()
+{
+	if( m_iTextInputs <= 0 )
+	{
+		SDL_StartTextInput();
+		printf( "Input.cpp: Starting text input.\n" );
+	}
+
+	m_iTextInputs++;
+}
+
+void Input::StopTextInput()
+{
+	m_iTextInputs--;
+
+	if( m_iTextInputs <= 0 )
+	{
+		SDL_StopTextInput();
+		printf( "Input.cpp: Stopping text input.\n" );
+	}
+}
+
+string Input::GetTextInput()
+{
+	string result = m_ssTextInput.str();
+	m_ssTextInput.str("");
+	return result;
+}
+
+bool Input::GetTextInputEnabled() const
+{
+	return ( m_iTextInputs > 0 );
 }
 
 int Input::FindKey( vector<SDL_Scancode>& vec, SDL_Scancode key )
@@ -107,6 +145,11 @@ bool Input::KeyReleased( SDL_Scancode key )
 	return ( FindKey( m_vecPrevKeys, key ) >= 0 );
 }
 
+bool Input::KeyRepeated( SDL_Scancode key )
+{
+	return ( FindKey( m_vecRepeatKeys, key ) >= 0 );
+}
+
 bool Input::MBDown( Uint8 mb )
 {
 	return m_buttons[mb];
@@ -140,16 +183,29 @@ vec2 Input::MouseDelta() { return m_mouseDelta; }
 
 void Input::lua_Register( lua_State* lua )
 {
-	lua_register( lua, "KeyDown", lua_KeyDown );
-	lua_register( lua, "KeyUp", lua_KeyUp );
-	lua_register( lua, "KeyPressed", lua_KeyPressed );
-	lua_register( lua, "KeyReleased", lua_KeyReleased );
-	lua_register( lua, "MBDown", lua_MBDown );
-	lua_register( lua, "MBUp", lua_MBUp );
-	lua_register( lua, "MBPressed", lua_MBPressed );
-	lua_register( lua, "MBReleased", lua_MBReleased );
-	lua_register( lua, "MousePosition", lua_MousePosition );
-	lua_register( lua, "MouseDelta", lua_MouseDelta );
+	luaL_Reg funcs[] =
+	{
+		{ "KeyDown", lua_KeyDown },
+		{ "KeyUp", lua_KeyUp },
+		{ "KeyPressed", lua_KeyPressed },
+		{ "KeyReleased", lua_KeyReleased },
+		{ "KeyRepeated", lua_KeyRepeated },
+		{ "MBDown", lua_MBDown },
+		{ "MBUp", lua_MBUp },
+		{ "MBPressed", lua_MBPressed },
+		{ "MBReleased", lua_MBReleased },
+		{ "MousePosition", lua_MousePosition },
+		{ "MouseDelta", lua_MouseDelta },
+		{ "StartTextInput", lua_StartTextInput },
+		{ "StopTextInput", lua_StopTextInput },
+		{ "TextInput", lua_TextInput },
+		{ "TextInputEnabled", lua_TextInputEnabled },
+		{ NULL, NULL }
+	};
+
+	lua_newtable( lua );
+	luaL_setfuncs( lua, funcs, 0 );
+	lua_setglobal( lua, "Input" );
 
 	// register SDL scancodes (this is so ugly)
 	lua_newtable( lua );
@@ -240,6 +296,20 @@ int Input::lua_KeyReleased( lua_State* lua )
 	return result;
 }
 
+int Input::lua_KeyRepeated( lua_State* lua )
+{
+	int result = 0;
+
+	if( lua_gettop( lua ) >= 1 )
+	{
+		SDL_Scancode key = static_cast<SDL_Scancode>( static_cast<int>( lua_tonumber( lua, 1 ) ) );
+		lua_pushboolean( lua, Input::Instance().KeyRepeated( key ) );
+		result = 1;
+	}
+
+	return result;
+}
+
 int Input::lua_MBDown( lua_State* lua )
 {
 	int result = 0;
@@ -304,4 +374,28 @@ int Input::lua_MousePosition( lua_State* lua )
 int Input::lua_MouseDelta( lua_State* lua )
 {
 	return Vec2::lua_Write( lua, Input::Instance().MouseDelta() );
+}
+
+int Input::lua_StartTextInput( lua_State* lua )
+{
+	Input::Instance().StartTextInput();
+	return 0;
+}
+
+int Input::lua_StopTextInput( lua_State* lua )
+{
+	Input::Instance().StopTextInput();
+	return 0;
+}
+
+int Input::lua_TextInput( lua_State* lua )
+{
+	lua_pushstring( lua, Input::Instance().GetTextInput().c_str() );
+	return 1;
+}
+
+int Input::lua_TextInputEnabled( lua_State* lua )
+{
+	lua_pushboolean( lua, Input::Instance().GetTextInputEnabled() );
+	return 1;
 }
