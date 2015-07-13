@@ -77,13 +77,16 @@ void Input::StartTextInput()
 
 void Input::StopTextInput()
 {
-	m_iTextInputs--;
-
-	if( m_iTextInputs <= 0 )
-	{
-		SDL_StopTextInput();
-		printf( "Input.cpp: Stopping text input.\n" );
-	}
+    if( m_iTextInputs > 0 )
+    {
+        m_iTextInputs--;
+        
+        if( m_iTextInputs <= 0 )
+        {
+            SDL_StopTextInput();
+            printf( "Input.cpp: Stopping text input.\n" );
+        }
+    }
 }
 
 string Input::GetTextInput()

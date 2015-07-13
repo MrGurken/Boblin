@@ -49,8 +49,11 @@ void Font::RenderText( Shader* shader, const char* text, vec2 position )
 		{
 			int index = text[i];
 		
-			RenderGlyph( shader, m_glyphs[index], position+offset );
-			offset.x += m_glyphs[index].GetWidth();
+            if( index >= FONT_ASCII_MIN && index <= FONT_ASCII_MAX )
+            {
+                RenderGlyph( shader, m_glyphs[index], position+offset );
+                offset.x += m_glyphs[index].GetWidth();
+            }
 		}
 	}
 }
@@ -73,21 +76,27 @@ void Font::RenderText( Shader* shader, const string& text, vec2 position )
 		{
 			int index = *it;
 
-			RenderGlyph( shader, m_glyphs[index], position+offset );
-			offset.x += m_glyphs[index].GetWidth();
+            if( index >= FONT_ASCII_MIN && index <= FONT_ASCII_MAX )
+            {
+                RenderGlyph( shader, m_glyphs[index], position+offset );
+                offset.x += m_glyphs[index].GetWidth();
+            }
 		}
 	}
 }
 
 void Font::RenderGlyph( Shader* shader, const Glyph& glyph, vec2 position )
 {
-	glyph.Bind();
+    if( glyph.GetWidth() > 0 && glyph.GetHeight() > 0 && glyph.GetID() > 0 )
+    {
+        glyph.Bind();
 
-	mat4 world = translate( vec3( position.x, position.y, 0.0f ) ) *
-					scale( vec3( glyph.GetWidth(), glyph.GetHeight(), 1.0 ) );
-	shader->SetUniform( "ModelMatrix", world );
+        mat4 world = translate( vec3( position.x, position.y, 0.0f ) ) *
+                        scale( vec3( glyph.GetWidth(), glyph.GetHeight(), 1.0 ) );
+        shader->SetUniform( "ModelMatrix", world );
 
-	Mesh::GetQuad()->Render();
+        Mesh::GetQuad()->Render();
+    }
 }
 
 vec2 Font::Size( const char* text )

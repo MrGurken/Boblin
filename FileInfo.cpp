@@ -13,7 +13,7 @@ uint64_t FileInfo::GetLastModified( const string& filename )
 		FindClose( file );
 	}
 #else
-	struct stat datA;
+	struct stat data;
 	if( stat( filename.c_str(), &data ) >= 0 )
 	{
 		result = data.st_mtime;

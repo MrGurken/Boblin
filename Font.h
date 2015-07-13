@@ -13,6 +13,8 @@ using namespace glm;
 #include "Shader.h"
 
 #define FONT_GLYPHS 128
+#define FONT_ASCII_MIN 32
+#define FONT_ASCII_MAX 128
 
 struct FontInfo : public AssetInfo
 {
