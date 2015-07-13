@@ -13,6 +13,8 @@ using std::stringstream;
 #define INPUT_MAX_BUTTONS 3
 #define KEY( _name ) lua_pushnumber( lua, _KEYINDEX++ ); lua_setfield( lua, -2, #_name );
 #define BUTTON( _name, _index ) lua_pushnumber( lua, _index ); lua_setfield( lua, -2, #_name );
+#define INPUT_ASCII_MIN 32
+#define INPUT_ASCII_MAX 125
 
 class Input
 {

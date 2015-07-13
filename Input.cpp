@@ -38,7 +38,11 @@ bool Input::Update()
 		}
 		else if( e.type == SDL_TEXTINPUT )
 		{
-			m_ssTextInput << e.text.text;
+			//m_ssTextInput << e.text.text;
+			int len = strlen(e.text.text);
+			for( int i=0; i<len; i++ )
+				if( e.text.text[i] >= INPUT_ASCII_MIN && e.text.text[i] <= INPUT_ASCII_MAX )
+					m_ssTextInput << e.text.text[i];
 		}
 		else if( e.type == SDL_MOUSEMOTION )
 		{
