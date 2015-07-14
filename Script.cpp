@@ -228,12 +228,20 @@ bool Runtime::GetRunning() const
 
 void Runtime::lua_Register( lua_State* lua )
 {
-	lua_register( lua, "Run", lua_Run );
-	lua_register( lua, "Refer", lua_Refer );
-	lua_register( lua, "Unrefer", lua_Unrefer );
-	lua_register( lua, "Seconds", lua_Seconds );
-	lua_register( lua, "ClearColor", lua_ClearColor );
-	lua_register( lua, "Quit", lua_Quit );
+	luaL_Reg funcs[] =
+	{
+		{ "Run", lua_Run },
+		{ "Refer", lua_Refer },
+		{ "Unrefer", lua_Unrefer },
+		{ "Seconds", lua_Seconds },
+		{ "ClearColor", lua_ClearColor },
+		{ "Quit", lua_Quit },
+		{ NULL, NULL }
+	};
+
+	lua_newtable( lua );
+	luaL_setfuncs( lua, funcs, 0 );
+	lua_setglobal( lua, "Runtime" );
 }
 
 int Runtime::lua_Run( lua_State* lua )
