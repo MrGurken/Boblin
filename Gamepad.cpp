@@ -7,6 +7,12 @@ Gamepad::Gamepad()
 
 Gamepad::~Gamepad()
 {
+	if( m_iIndex >= 0 && m_iIndex < 4 )
+	{
+		XINPUT_VIBRATION vibration;
+		ZeroMemory( &vibration, sizeof(vibration) );
+		XInputSetState( m_iIndex, &vibration );
+	}
 }
 
 void Gamepad::Vibrate( float left, float right )
