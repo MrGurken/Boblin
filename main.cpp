@@ -99,6 +99,7 @@ int main( int argc, char* argv[] )
 
 					const unsigned int targetTicks = 1000 / Config::Instance().GetFPS();
 
+					//Input::Instance().UseGamepad( 0, true );
 					while( Runtime::Instance().GetRunning() )
 					{
 						unsigned int startTick = SDL_GetTicks();
@@ -127,6 +128,10 @@ int main( int argc, char* argv[] )
 
 						GameObject::RenderAll( &shader );
 						Text::RenderAll( &shader );
+
+						/*if( Input::Instance().GPConnected( 0 ) )
+							if( Input::Instance().GPPressed( 0, A ) )
+								printf("HAHAHA\n");*/
 
 						SDL_GL_SwapWindow( window );
 
