@@ -66,7 +66,6 @@ void Texture::lua_Register( lua_State* lua )
 	luaL_Reg funcs[] =
 	{
 		{ "Load", lua_Load },
-		{ "Dimensions", lua_Dimensions },
 		{ NULL, NULL }
 	};
 
@@ -94,6 +93,10 @@ int Texture::lua_Write( lua_State* lua, Texture* texture )
 	lua_newtable( lua );
 	lua_pushlightuserdata( lua, texture );
 	lua_setfield( lua, -2, "__self" );
+	lua_pushnumber( lua, texture->GetWidth() );
+	lua_setfield( lua, -2, "width" );
+	lua_pushnumber( lua, texture->GetHeight() );
+	lua_setfield( lua, -2, "height" );
 	luaL_getmetatable( lua, "Texture" );
 	lua_setmetatable( lua, -2 );
 	return 1;
@@ -112,22 +115,6 @@ int Texture::lua_Load( lua_State* lua )
 		if( t )
 		{
 			result = lua_Write( lua, t );
-		}
-	}
-
-	return result;
-}
-
-int Texture::lua_Dimensions( lua_State* lua )
-{
-	int result = 0;
-
-	if( lua_gettop( lua ) >= 1 )
-	{
-		Texture* ptr = lua_Read( lua, 1 );
-		if( ptr )
-		{
-			result = Vec2::lua_Write( lua, vec2( ptr->GetWidth(), ptr->GetHeight() ) );
 		}
 	}
 

@@ -2,9 +2,17 @@
 
 void File::lua_Register( lua_State* lua )
 {
-	lua_register( lua, "GetFiles", lua_GetFiles );
-	lua_register( lua, "GetDirectories", lua_GetDirectories );
-	lua_register( lua, "GetAll", lua_GetAll );
+	luaL_Reg funcs[] =
+	{
+		{ "GetFiles", lua_GetFiles },
+		{ "GetDirectories", lua_GetDirectories },
+		{ "GetAll", lua_GetAll },
+		{ NULL, NULL }
+	};
+
+	lua_newtable( lua );
+	luaL_setfuncs( lua, funcs, 0 );
+	lua_setglobal( lua, "File" );
 }
 
 int File::lua_Write( lua_State* lua, const char* path, bool directory )

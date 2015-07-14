@@ -13,7 +13,6 @@ public:
 	Texture( const Texture& ref );
 	virtual ~Texture();
 
-	//bool	Load( const string& filename ) override;
 	bool	Load( const AssetInfo* info ) override;
 	void	Unload() override;
 
@@ -27,7 +26,6 @@ public:
 	static Texture* lua_Read( lua_State* lua, int index );
 	static int lua_Write( lua_State* lua, Texture* texture );
 	static int lua_Load( lua_State* lua );
-	static int lua_Dimensions( lua_State* lua );
 
 private:
 	GLuint	m_glID;
