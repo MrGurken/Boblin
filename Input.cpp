@@ -36,7 +36,7 @@ bool Input::Update()
 		else if( e.type == SDL_TEXTINPUT )
 		{
 			//m_ssTextInput << e.text.text;
-			int len = strlen(e.text.text);
+            int len = static_cast<int>( strlen(e.text.text) );
 			for( int i=0; i<len; i++ )
 				if( e.text.text[i] >= INPUT_ASCII_MIN && e.text.text[i] <= INPUT_ASCII_MAX )
 					m_ssTextInput << e.text.text[i];
@@ -62,9 +62,11 @@ bool Input::Update()
 		}
 	}
 
+#ifdef WIN32
 	for( int i=0; i<INPUT_MAX_GAMEPADS; i++ )
 		if( m_gamepads[i].GetUsed() )
 			m_gamepads[i].GetState();
+#endif
 
 	return result;
 }
@@ -185,6 +187,7 @@ bool Input::MBReleased( Uint8 mb )
 vec2 Input::MousePosition() { return m_mousePosition; }
 vec2 Input::MouseDelta() { return m_mouseDelta; }
 
+#ifdef WIN32
 bool Input::GPConnected( int index ) { return m_gamepads[index].GetConnected(); }
 bool Input::GPDown( int index, GamepadButton button ) { return m_gamepads[index].GPDown( button ); }
 bool Input::GPUp( int index, GamepadButton button ) { return m_gamepads[index].GPUp( button ); }
@@ -198,6 +201,7 @@ vec2 Input::LeftStickDelta( int index ) { return m_gamepads[index].LeftStickDelt
 vec2 Input::RightStickDelta( int index ) { return m_gamepads[index].RightStickDelta(); }
 void Input::Vibrate( int index, float left, float right ) { m_gamepads[index].Vibrate( left, right ); }
 void Input::UseGamepad( int index, bool use ) { m_gamepads[index].SetUsed( use ); }
+#endif
 
 // ***********************************************************************
 // LUA
@@ -236,7 +240,7 @@ void Input::lua_Register( lua_State* lua )
 	KEY( F7 ); KEY( F8 ); KEY( F9 ); KEY( F10 ); KEY( F11 ); KEY( F12 );
 	KEY( PrintScreen ); KEY( ScrollLock ); KEY( Pause ); KEY( Insert );
 	KEY( Home ); KEY( PageUp ); KEY( Delete ); KEY( End ); KEY( PageDown );
-	KEY( Right ); KEY( Left ); KEY( Down ); KEY( Up );
+	KEY( RightArrow ); KEY( LeftArrow ); KEY( DownArrow ); KEY( UpArrow );
 	KEY( KP_Divide ); KEY( KP_Multiply ); KEY( KP_Minus ); KEY( KP_Plus ); KEY( KP_Enter );
 	KEY( KP_1 ); KEY( KP_2 ); KEY( KP_3 ); KEY( KP_4 ); KEY( KP_5 );
 	KEY( KP_6  ); KEY( KP_7 ); KEY( KP_8 ); KEY( KP_9 ); KEY( KP_0 ); KEY( KP_Period );
@@ -264,6 +268,7 @@ void Input::lua_Register( lua_State* lua )
 	BUTTON( Right, 0 );
 	lua_setglobal( lua, "Mouse" );
 
+#ifdef WIN32
 	luaL_Reg gamepadFuncs[] =
 	{
 		{ "Use", lua_UseGamepad },
@@ -284,9 +289,17 @@ void Input::lua_Register( lua_State* lua )
 
 	luaL_newmetatable( lua, "Gamepad" );
 	luaL_setfuncs( lua, gamepadFuncs, 0 );
+    lua_pushboolean( lua, true );
+    lua_setfield( lua, -2, "available" );
 	lua_pushvalue( lua, -1 );
 	lua_setfield( lua, -2, "__index" );
 	lua_setglobal( lua, "Gamepad" );
+#else
+    lua_newtable( lua );
+    lua_pushboolean( lua, false );
+    lua_setfield( lua, -2, "available" );
+    lua_setglobal( lua, "Gamepad" );
+#endif
 }
 
 int Input::lua_KeyDown( lua_State* lua )
@@ -448,6 +461,7 @@ int Input::lua_WriteGamepad( lua_State* lua, int index )
 	return 1;
 }
 
+#ifdef WIN32
 int Input::lua_UseGamepad( lua_State* lua )
 {
 	int result = 0;
@@ -639,6 +653,7 @@ int Input::lua_Vibrate( lua_State* lua )
 
 	return result;
 }
+#endif
 
 int Input::lua_StartTextInput( lua_State* lua )
 {

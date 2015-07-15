@@ -47,6 +47,7 @@ public:
 	vec2					MousePosition();
 	vec2					MouseDelta();
 
+#ifdef WIN32
 	void					UseGamepad( int index, bool use );
 	bool					GPConnected( int index );
 	bool					GPDown( int index, GamepadButton button );
@@ -60,6 +61,7 @@ public:
 	vec2					LeftStickDelta( int index );
 	vec2					RightStickDelta( int index );
 	void					Vibrate( int index, float left, float right );
+#endif
 
 	static void				lua_Register( lua_State* lua );
 	static int				lua_KeyDown( lua_State* lua );
@@ -99,8 +101,10 @@ public:
 private:
 	Input() : m_sdlWindow( nullptr ), m_iTextInputs( 0 )
 	{
+#ifdef WIN32
 		for( int i=0; i<INPUT_MAX_GAMEPADS; i++ )
 			m_gamepads[i].SetIndex( i );
+#endif
 	}
 	Input( const Input& ref ){}
 
@@ -119,7 +123,9 @@ private:
 	int						m_iMouseWheelDelta;
 	int						m_iTextInputs;
 	stringstream			m_ssTextInput;
+#ifdef WIN32
 	Gamepad					m_gamepads[INPUT_MAX_GAMEPADS];
+#endif
 };
 
 #endif

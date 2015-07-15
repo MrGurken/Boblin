@@ -1,5 +1,6 @@
 #include "Gamepad.h"
 
+#ifdef WIN32
 Gamepad::Gamepad()
 	: m_iIndex( -1 ), m_bConnected( false ), m_bUsed( false )
 {
@@ -113,3 +114,6 @@ const XINPUT_STATE& Gamepad::GetState()
 
 bool Gamepad::GetConnected() const { return m_bConnected; }
 bool Gamepad::GetUsed() const { return m_bUsed; }
+
+#else
+#endif
