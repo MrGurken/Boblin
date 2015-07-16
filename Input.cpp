@@ -291,6 +291,22 @@ void Input::lua_Register( lua_State* lua )
 	luaL_setfuncs( lua, gamepadFuncs, 0 );
     lua_pushboolean( lua, true );
     lua_setfield( lua, -2, "available" );
+
+	GP( DirUp, XINPUT_GAMEPAD_DPAD_UP );
+	GP( DirDown, XINPUT_GAMEPAD_DPAD_DOWN );
+	GP( DirLeft, XINPUT_GAMEPAD_DPAD_LEFT );
+	GP( DirRight, XINPUT_GAMEPAD_DPAD_RIGHT );
+	GP( Start, XINPUT_GAMEPAD_START );
+	GP( Back, XINPUT_GAMEPAD_BACK );
+	GP( LeftThumb, XINPUT_GAMEPAD_LEFT_THUMB );
+	GP( RightThumb, XINPUT_GAMEPAD_RIGHT_THUMB );
+	GP( LeftShoulder, XINPUT_GAMEPAD_LEFT_SHOULDER );
+	GP( RightShoulder, XINPUT_GAMEPAD_RIGHT_SHOULDER );
+	GP( A, XINPUT_GAMEPAD_A );
+	GP( B, XINPUT_GAMEPAD_B );
+	GP( X, XINPUT_GAMEPAD_X );
+	GP( Y, XINPUT_GAMEPAD_Y );
+
 	lua_pushvalue( lua, -1 );
 	lua_setfield( lua, -2, "__index" );
 	lua_setglobal( lua, "Gamepad" );
