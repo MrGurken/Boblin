@@ -61,7 +61,7 @@ public:
 	bool			Run( const string& filename );
 	void			Refer( int ref );
 	void			Unrefer( int ref );
-	int				Seconds( int sec );
+	float			Seconds( float sec );
 
 	void			Update();
 

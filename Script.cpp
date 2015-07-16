@@ -193,9 +193,9 @@ int Runtime::FindRef( int ref )
 	return index;
 }
 
-int Runtime::Seconds( int sec )
+float Runtime::Seconds( float sec )
 {
-	return ( sec * Config::Instance().GetFPS() );
+	return ( sec * static_cast<float>( Config::Instance().GetFPS() ) );
 }
 
 void Runtime::Update()
@@ -292,7 +292,7 @@ int Runtime::lua_Seconds( lua_State* lua )
 
 	if( lua_gettop( lua ) >= 1 )
 	{
-		int sec = static_cast<int>( lua_tonumber( lua, 1 ) );
+		float sec = static_cast<float>( lua_tonumber( lua, 1 ) );
 		lua_pushnumber( lua, Runtime::Instance().Seconds( sec ) );
 		result = 1;
 	}
