@@ -264,8 +264,8 @@ void Input::lua_Register( lua_State* lua )
 	lua_newtable( lua );
 	luaL_setfuncs( lua, mouseFuncs, 0 );
 	BUTTON( Left, 0 );
-	BUTTON( Middle, 0 );
-	BUTTON( Right, 0 );
+	BUTTON( Middle, 1 );
+	BUTTON( Right, 2 );
 	lua_setglobal( lua, "Mouse" );
 
 #ifdef WIN32
