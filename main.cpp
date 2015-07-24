@@ -98,25 +98,33 @@ int main( int argc, char* argv[] )
 					Input::Instance().SetWindow( window );
 
 					const unsigned int targetTicks = 1000 / Config::Instance().GetFPS();
+					
+					unsigned int currentTime = SDL_GetTicks();
+					unsigned int accumulator = 0;
 
-					//Input::Instance().UseGamepad( 0, true );
 					while( Runtime::Instance().GetRunning() )
 					{
-						unsigned int startTick = SDL_GetTicks();
+						unsigned int newTime = SDL_GetTicks();
+						unsigned int frameTime = newTime - currentTime;
+						currentTime = newTime;
 
-						if( !Input::Instance().Update() )
-							Runtime::Instance().Quit();
+						accumulator += frameTime;
+						while( accumulator > targetTicks )
+						{
+							if( !Input::Instance().Update() )
+								Runtime::Instance().Quit();
 
-						// Update
-						if( Config::Instance().GetDebugMode() )
-							Runtime::Instance().Hotload();
-						Runtime::Instance().Update();
+							if( Config::Instance().GetDebugMode() )
+								Runtime::Instance().Hotload();
+							Runtime::Instance().Update();
 
-						GameObject::UpdateAll();
+							GameObject::UpdateAll();
+
+							accumulator -= targetTicks;
+						}
 
 						// Render
 						glClear( GL_COLOR_BUFFER_BIT );
-
 						shader.Bind();
 
 						Camera* camera = Camera::GetActive();
@@ -129,16 +137,7 @@ int main( int argc, char* argv[] )
 						GameObject::RenderAll( &shader );
 						Text::RenderAll( &shader );
 
-						/*if( Input::Instance().GPConnected( 0 ) )
-							if( Input::Instance().GPPressed( 0, A ) )
-								printf("HAHAHA\n");*/
-
 						SDL_GL_SwapWindow( window );
-
-						// Adjust time
-						unsigned int tickDif = SDL_GetTicks() - startTick;
-						if( tickDif < targetTicks )
-							SDL_Delay( targetTicks - tickDif );
 					}
 				}
 
